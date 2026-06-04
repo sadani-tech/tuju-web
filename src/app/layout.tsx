@@ -6,7 +6,7 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Tuju — Find Your Direction",
+  title: "Tuju — Temukan Jalanmu",
   description: "Temukan jalur hidup terbaik kamu. Dari jurusan SMA hingga karier impian.",
 };
 
