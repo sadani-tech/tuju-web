@@ -5,7 +5,6 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// Attach JWT token to every request
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("tuju_token");
@@ -14,7 +13,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 globally → redirect to login
 api.interceptors.response.use(
   (res) => res,
   (err) => {
@@ -32,25 +30,31 @@ export const authApi = {
   login: (data: { email: string; password: string }) =>
     api.post("/api/v1/auth/login", data),
   me: () => api.get("/api/v1/auth/me"),
+  onboarding: (data: {
+    segment: string;
+    city?: string;
+    birth_date?: string;
+    interest_domains?: string[];
+  }) => api.put("/api/v1/auth/onboarding", data),
 };
 
 export const profileApi = {
+  me: () => api.get("/api/v1/profile/me"),
   getCompleteness: () => api.get("/api/v1/profile/completeness"),
   updateSegment: (data: object) => api.put("/api/v1/profile/segment", data),
   updateAcademic: (data: object) => api.put("/api/v1/profile/academic", data),
   updatePersonality: (data: object) => api.put("/api/v1/profile/personality", data),
   updateInterests: (data: object) => api.put("/api/v1/profile/interests", data),
   updateGoals: (data: object) => api.put("/api/v1/profile/goals", data),
+  updateWorkStyle: (data: object) => api.put("/api/v1/profile/work_style", data),
 };
 
 export const reportApi = {
   generate: () => api.post("/api/v1/report/generate"),
   getLatest: () => api.get("/api/v1/report/latest"),
   getStatus: (id: string) => api.get(`/api/v1/report/${id}/status`),
-};
-
-export const roadmapApi = {
-  list: () => api.get("/api/v1/roadmap/"),
+  getLayered: () => api.get("/api/v1/report/layered"),
+  getHistory: () => api.get("/api/v1/report/history"),
 };
 
 export const pointsApi = {
