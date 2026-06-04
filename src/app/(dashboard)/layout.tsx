@@ -7,7 +7,7 @@ const navItems = [
   { href: "/report", icon: "🎯", label: "Life Path" },
   { href: "/roadmap", icon: "🗺️", label: "Roadmap", disabled: true },
   { href: "/explore", icon: "🔍", label: "Eksplorasi", disabled: true },
-  { href: "/chat", icon: "🤖", label: "AI Expert", disabled: true },
+  { href: "/chat", icon: "🤖", label: "AI Expert" },
   { href: "/points", icon: "🏆", label: "Poin", disabled: true },
   { href: "/profile", icon: "👤", label: "Profil" },
 ];

@@ -1,4 +1,5 @@
 import axios from "axios";
+import type { ChatMessage, SSEEvent } from "@/types";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
@@ -63,6 +64,92 @@ export const pointsApi = {
 
 export const professionsApi = {
   list: () => api.get("/api/v1/professions/"),
+};
+
+export const chatApi = {
+  getProfessions: (category?: string) =>
+    api.get("/api/v1/chat/professions", {
+      params: category ? { category } : {},
+    }),
+  startSession: (data: {
+    profession_id: string;
+    resume_session_id?: string;
+  }) => api.post("/api/v1/chat/start", data),
+  getSessions: (limit = 20, offset = 0) =>
+    api.get("/api/v1/chat/sessions", { params: { limit, offset } }),
+  getMessages: (sessionId: string) =>
+    api.get(`/api/v1/chat/sessions/${sessionId}/messages`),
+};
+
+export const streamChat = async (
+  data: { session_id: string; message: string; history: ChatMessage[] },
+  onChunk: (text: string) => void,
+  onDone: (event: SSEEvent) => void,
+  onPointsAwarded: (points: number) => void,
+  onError: (message: string) => void,
+): Promise<void> => {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("tuju_token") : null;
+
+  let response: Response;
+  try {
+    response = await fetch("/api/chat/stream", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(data),
+    });
+  } catch {
+    onError("Koneksi terputus");
+    return;
+  }
+
+  if (!response.ok) {
+    onError("Terjadi kesalahan pada server");
+    return;
+  }
+
+  if (!response.body) {
+    onError("Stream tidak tersedia");
+    return;
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+
+      for (const line of lines) {
+        if (!line.startsWith("data: ")) continue;
+        try {
+          const event: SSEEvent = JSON.parse(line.slice(6));
+          if (event.type === "chunk" && event.content != null) {
+            onChunk(event.content);
+          } else if (event.type === "done") {
+            onDone(event);
+          } else if (event.type === "points_awarded" && event.points != null) {
+            onPointsAwarded(event.points);
+          } else if (event.type === "error" && event.message) {
+            onError(event.message);
+          }
+        } catch {
+          // skip malformed SSE line
+        }
+      }
+    }
+  } catch {
+    onError("Koneksi terputus di tengah streaming");
+  }
 };
 
 export default api;

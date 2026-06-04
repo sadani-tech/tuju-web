@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
+import Link from "next/link";
 import { reportApi, authApi } from "@/lib/api";
 import {
   LifePathReport,
@@ -333,6 +334,20 @@ export default function ReportPage() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* AI Chat CTA */}
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-5 text-white text-center space-y-2">
+        <p className="font-semibold text-lg">Mau tahu lebih lanjut tentang profesi ini?</p>
+        <p className="text-blue-200 text-sm">
+          Chat langsung dengan AI yang berperan sebagai profesional di bidang itu
+        </p>
+        <Link
+          href="/chat"
+          className="inline-block mt-2 bg-white text-blue-600 font-semibold px-6 py-2.5 rounded-xl hover:bg-blue-50 transition text-sm"
+        >
+          💬 Chat dengan AI Expert →
+        </Link>
       </div>
     </div>
   );

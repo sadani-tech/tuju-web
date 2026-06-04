@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { authApi, reportApi } from "@/lib/api";
-import { MeResponse, LifePathReport } from "@/types";
+import { authApi, reportApi, chatApi } from "@/lib/api";
+import { MeResponse, LifePathReport, ChatSession } from "@/types";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { PillBadge } from "@/components/ui/PillBadge";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
@@ -27,6 +27,7 @@ function getLevelInfo(pts: number) {
 export default function DashboardPage() {
   const [me, setMe] = useState<MeResponse | null>(null);
   const [report, setReport] = useState<LifePathReport | null>(null);
+  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
   const [reportLoading, setReportLoading] = useState(true);
   const [loading, setLoading] = useState(true);
 
@@ -52,6 +53,11 @@ export default function DashboardPage() {
       .then((r) => setReport(r.data))
       .catch(() => setReport(null))
       .finally(() => setReportLoading(false));
+
+    chatApi
+      .getSessions(20, 0)
+      .then((r) => setChatSessions(r.data))
+      .catch(() => {});
   }, []);
 
   if (loading) {
@@ -232,7 +238,7 @@ export default function DashboardPage() {
           { href: "/profile", icon: "📋", label: "Profil", disabled: false },
           { href: "/report", icon: "🎯", label: "Report", disabled: false },
           { href: "/roadmap", icon: "🗺️", label: "Roadmap", disabled: true },
-          { href: "/chat", icon: "🤖", label: "AI Expert", disabled: true },
+          { href: "/chat", icon: "🤖", label: "AI Expert", disabled: false },
         ].map((item) => (
           <div key={item.href} className="relative">
             <Link
@@ -257,6 +263,31 @@ export default function DashboardPage() {
           </div>
         ))}
       </div>
+
+      {/* Last chat session shortcut */}
+      {chatSessions.length > 0 && (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
+              {chatSessions[0].profession.emoji || "🤖"}
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-slate-900">
+                💬 Sesi AI Chat: {chatSessions.length} sesi
+              </p>
+              <p className="text-xs text-slate-500">
+                Terakhir: {chatSessions[0].profession.name}
+              </p>
+            </div>
+          </div>
+          <Link
+            href={`/chat/${chatSessions[0].profession.slug}?session=${chatSessions[0].session_id}`}
+            className="text-xs font-medium text-blue-600 border border-blue-200 hover:border-blue-400 px-3 py-1.5 rounded-lg transition flex-shrink-0"
+          >
+            Lanjutkan →
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

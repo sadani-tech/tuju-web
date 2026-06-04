@@ -113,3 +113,44 @@ export interface PointsData {
   total_points: number;
   current_level: string;
 }
+
+export interface ChatProfession {
+  id: string;
+  slug: string;
+  name: string;
+  emoji: string | null;
+  category: string;
+  description: string | null;
+}
+
+export interface ChatMessage {
+  id?: string;
+  role: "user" | "assistant";
+  content: string;
+  created_at?: string;
+}
+
+export interface ChatSession {
+  session_id: string;
+  profession: {
+    id: string;
+    slug: string;
+    name: string;
+    emoji: string | null;
+    category: string;
+    description?: string | null;
+  };
+  message_count: number;
+  points_awarded: boolean;
+  started_at: string;
+  last_message_preview?: string | null;
+}
+
+export interface SSEEvent {
+  type: "chunk" | "done" | "points_awarded" | "error";
+  content?: string;
+  session_id?: string;
+  message_count?: number;
+  points?: number;
+  message?: string;
+}

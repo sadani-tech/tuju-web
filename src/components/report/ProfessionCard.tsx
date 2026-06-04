@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { RecommendationItem } from "@/types";
 import { ScoreBar } from "@/components/ui/ScoreBar";
 import { PillBadge } from "@/components/ui/PillBadge";
@@ -66,6 +67,17 @@ export function ProfessionCard({ item, rank }: ProfessionCardProps) {
               </span>
             </span>
           ))}
+        </div>
+      )}
+
+      {item.profession_slug && (
+        <div className="mt-3 pt-3 border-t border-slate-100">
+          <Link
+            href={`/chat/${item.profession_slug}`}
+            className="flex items-center justify-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 py-1.5 border border-blue-200 hover:border-blue-400 rounded-lg transition w-full"
+          >
+            💬 Chat dengan AI Expert →
+          </Link>
         </div>
       )}
     </div>
