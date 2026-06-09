@@ -2,11 +2,11 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Tuju — Find Your Direction. Build Your Life.",
+  title: "Tuju — Temukan Jalanmu. Bangun Hidupmu.",
   description:
     "Platform AI yang membantu kamu menemukan jalur hidup terbaik — dari jurusan SMA, kuliah, hingga karier — berdasarkan data nyata yang kamu miliki.",
   openGraph: {
-    title: "Tuju — Find Your Direction. Build Your Life.",
+    title: "Tuju — Temukan Jalanmu. Bangun Hidupmu.",
     description:
       "Platform AI untuk menemukan jalur hidupmu — jurusan SMA, kuliah, hingga karier.",
   },
@@ -324,7 +324,7 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <p className="text-xl font-bold mb-1">Tuju</p>
-              <p className="text-slate-500 text-sm">Find Your Direction. Build Your Life.</p>
+              <p className="text-slate-500 text-sm">Temukan Jalanmu. Bangun Hidupmu.</p>
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-slate-400">
               {["Tentang", "Fitur", "Profesi", "Kontak"].map((link) => (
