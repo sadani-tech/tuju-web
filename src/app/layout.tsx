@@ -6,8 +6,8 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Tuju — Find Your Direction",
-  description: "Temukan jalur hidup terbaik kamu. Dari jurusan SMA hingga karier impian.",
+  title: { default: "Tuju", template: "%s — Tuju" },
+  description: "Platform AI untuk menemukan jalur hidupmu — jurusan SMA, kuliah, hingga karier.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
