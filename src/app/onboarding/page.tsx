@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { authApi, reportApi } from "@/lib/api";
+import { authApi, reportApi, roadmapApi } from "@/lib/api";
 import { Segment } from "@/types";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -132,6 +132,7 @@ export default function OnboardingPage() {
         interest_domains: finalForm.interest_domains,
       });
 
+      await roadmapApi.init().catch(() => {});
       const res = await reportApi.generate();
       const id = res.data.report_id;
       clearInterval(msgInterval);

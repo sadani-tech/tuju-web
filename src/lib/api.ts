@@ -58,8 +58,22 @@ export const reportApi = {
   getHistory: () => api.get("/api/v1/report/history"),
 };
 
+export const evolutionApi = {
+  list:    (params?: object) => api.get("/api/v1/evolution",         { params }),
+  summary: ()               => api.get("/api/v1/evolution/summary"),
+};
+
+export const roadmapApi = {
+  init:            ()                  => api.post("/api/v1/roadmap/init"),
+  get:             ()                  => api.get("/api/v1/roadmap"),
+  completeTask:    (userTaskId: string)=> api.post(`/api/v1/roadmap/tasks/${userTaskId}/complete`),
+  updateMilestone: (data: object)      => api.post("/api/v1/roadmap/milestone", data),
+};
+
 export const pointsApi = {
-  get: () => api.get("/api/v1/points/"),
+  get:          ()             => api.get("/api/v1/points"),
+  transactions: (params?: object) => api.get("/api/v1/points/transactions", { params }),
+  redeem:       (data: object) => api.post("/api/v1/points/redeem", data),
 };
 
 export const professionsApi = {

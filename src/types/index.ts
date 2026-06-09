@@ -154,3 +154,77 @@ export interface SSEEvent {
   points?: number;
   message?: string;
 }
+
+// ── Evolution ─────────────────────────────────────────────────────────────────
+
+export interface EvolutionEvent {
+  id: string;
+  event_type: string;
+  description: string;
+  points_earned: number;
+  metadata: Record<string, unknown> | null;
+  created_at: string;
+  icon: string;
+}
+
+export interface EvolutionSummary {
+  total_events: number;
+  total_points_earned: number;
+  chat_sessions: number;
+  tasks_completed: number;
+  reports_generated: number;
+  current_streak: number;
+  longest_streak: number;
+}
+
+// ── Roadmap ───────────────────────────────────────────────────────────────────
+
+export interface RoadmapTask {
+  id: string;
+  task_id: string;
+  title: string;
+  description: string;
+  layer: number;
+  difficulty: "easy" | "medium" | "hard";
+  points_reward: number;
+  status: "available" | "completed" | "locked";
+  completed_at: string | null;
+  segment_filter: string[] | null;
+}
+
+export interface RoadmapLayer {
+  layer: number;
+  label: string;
+  color: string;
+  locked: boolean;
+  progress: { completed: number; total: number };
+  tasks: RoadmapTask[];
+}
+
+export interface RoadmapResponse {
+  layers: RoadmapLayer[];
+  total_progress: { completed: number; total: number };
+  next_task: RoadmapTask | null;
+}
+
+// ── Points ────────────────────────────────────────────────────────────────────
+
+export interface PointsBalance {
+  total_points: number;
+  current_level: string;
+  next_level: string | null;
+  points_to_next_level: number;
+  progress_to_next_pct: number;
+  current_streak: number;
+  longest_streak: number;
+}
+
+export interface PointsTransaction {
+  id: string;
+  amount: number;
+  type: string;
+  source: string;
+  description: string;
+  balance_after: number;
+  created_at: string;
+}
