@@ -77,7 +77,22 @@ export const pointsApi = {
 };
 
 export const professionsApi = {
-  list: () => api.get("/api/v1/professions/"),
+  list:       (params?: object) => api.get("/api/v1/professions", { params }),
+  categories: ()                => api.get("/api/v1/professions/categories"),
+  detail:     (slug: string)    => api.get(`/api/v1/professions/${slug}`),
+};
+
+export const settingsApi = {
+  get:                ()             => api.get("/api/v1/settings"),
+  updateProfile:      (data: object) => api.put("/api/v1/settings/profile", data),
+  updatePassword:     (data: object) => api.put("/api/v1/settings/password", data),
+  updateNotifications:(data: object) => api.put("/api/v1/settings/notifications", data),
+  deleteAccount:      (data: object) => api.delete("/api/v1/settings/account", { data }),
+};
+
+export const rewardsApi = {
+  list:   ()             => api.get("/api/v1/points/rewards"),
+  redeem: (data: object) => api.post("/api/v1/points/redeem", data),
 };
 
 export const chatApi = {

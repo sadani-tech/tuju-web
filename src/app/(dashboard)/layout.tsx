@@ -18,13 +18,14 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { href: "/dashboard", icon: "🏠", label: "Dashboard",    mobile: true  },
-  { href: "/report",    icon: "🎯", label: "Life Path",    mobile: false },
-  { href: "/chat",      icon: "🤖", label: "AI Expert",    mobile: true  },
-  { href: "/evolution", icon: "✨", label: "Perjalanan",   mobile: false },
-  { href: "/roadmap",   icon: "🗺️", label: "Roadmap",      mobile: true  },
-  { href: "/points",    icon: "🏆", label: "Poin & Level", mobile: true  },
-  { href: "/explore",   icon: "🔍", label: "Eksplorasi",   disabled: true, mobile: false },
+  { href: "/report",    icon: "🎯", label: "Life Path",    mobile: true  },
   { href: "/profile",   icon: "👤", label: "Profil",       mobile: true  },
+  { href: "/roadmap",   icon: "🗺️", label: "Roadmap",      mobile: false },
+  { href: "/evolution", icon: "✨", label: "Perjalanan",   mobile: false },
+  { href: "/chat",      icon: "🤖", label: "AI Expert",    mobile: true  },
+  { href: "/explore",   icon: "🔍", label: "Eksplorasi",   mobile: true  },
+  { href: "/points",    icon: "🏆", label: "Poin & Level", mobile: false },
+  { href: "/settings",  icon: "⚙️", label: "Pengaturan",   mobile: false },
 ];
 
 const STARS_BY_LEVEL: Record<string, number> = {
@@ -46,19 +47,42 @@ function LayoutInit() {
 }
 
 function SidebarUserBadge() {
-  const { meData }                           = useAuthStore();
-  const { totalPoints, currentLevel }        = usePointsStore();
+  const { meData, logout }             = useAuthStore();
+  const { totalPoints, currentLevel }  = usePointsStore();
   if (!meData?.name && totalPoints === 0) return null;
-  const stars = STARS_BY_LEVEL[currentLevel] ?? 1;
+  const stars    = STARS_BY_LEVEL[currentLevel] ?? 1;
+  const initials = meData?.name?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() ?? "??";
+
+  const handleLogout = () => {
+    logout();
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("tuju_token");
+      window.location.href = "/";
+    }
+  };
+
   return (
     <div className="px-4 py-3 border-t border-slate-100">
-      {meData?.name && (
-        <p className="text-xs font-semibold text-slate-700 truncate mb-0.5">{meData.name}</p>
-      )}
-      <div className="flex items-center gap-1.5">
-        <span className="text-amber-400 text-sm tracking-tight">{"★".repeat(stars)}</span>
-        <span className="text-xs text-slate-500">{totalPoints.toLocaleString("id")} pts</span>
+      <div className="flex items-center gap-2.5 mb-2">
+        <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-bold flex-shrink-0">
+          {initials}
+        </div>
+        <div className="min-w-0 flex-1">
+          {meData?.name && (
+            <p className="text-xs font-semibold text-slate-700 truncate">{meData.name}</p>
+          )}
+          <div className="flex items-center gap-1">
+            <span className="text-amber-400 text-xs tracking-tight">{"★".repeat(stars)}</span>
+            <span className="text-xs text-slate-500">{totalPoints.toLocaleString("id")} pts</span>
+          </div>
+        </div>
       </div>
+      <button
+        onClick={handleLogout}
+        className="w-full text-xs text-slate-500 hover:text-red-600 transition py-1.5 rounded-lg hover:bg-red-50 text-center font-medium"
+      >
+        Keluar
+      </button>
     </div>
   );
 }
