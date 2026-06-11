@@ -40,6 +40,24 @@
     content: "";
     @apply absolute left-0 top-0 bottom-0 w-1 bg-secondary;
   }
+  /* Lift-on-hover card (explore/professions mockup) */
+  .hover-lift {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-6px);
+    box-shadow: 0px 16px 40px rgba(0, 35, 102, 0.1);
+    border-color: #dce1ff;
+  }
+  /* Teal ring glow for top-match / recommended cards */
+  .top-match-glow {
+    box-shadow: 0 0 0 2px #00dfc1, 0 8px 30px rgba(0, 223, 193, 0.2);
+    border-color: transparent;
+  }
+  .top-match-glow:hover {
+    box-shadow: 0 0 0 2px #00dfc1, 0 16px 40px rgba(0, 223, 193, 0.3);
+    border-color: transparent;
+  }
   /* Focused input — 2px royal border with soft teal outer glow */
   .input-tuju {
     @apply w-full rounded-md border border-outline-variant bg-surface-container-lowest px-4 py-3 text-on-surface placeholder:text-outline transition focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary focus:shadow-glow-teal;

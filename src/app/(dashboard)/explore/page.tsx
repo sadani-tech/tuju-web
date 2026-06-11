@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { Search, X, GraduationCap, TrendingUp, Star, ArrowRight, SearchX } from "lucide-react";
 import { professionsApi, reportApi } from "@/lib/api";
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { toast } from "@/components/ui/Toast";
 
 type ProfessionItem = {
@@ -20,6 +20,20 @@ type ProfessionItem = {
 
 type Category = { category: string; count: number; emoji: string };
 
+// Category tint gradients + accent text color, cycled per the polished mockup
+const CATEGORY_STYLES = [
+  { overlay: "bg-gradient-to-br from-primary-fixed/50 to-transparent", accent: "text-secondary" },
+  { overlay: "bg-gradient-to-br from-accent-purple/10 to-transparent", accent: "text-accent-purple" },
+  { overlay: "bg-gradient-to-br from-secondary-fixed/50 to-transparent", accent: "text-on-secondary-fixed-variant" },
+  { overlay: "bg-gradient-to-br from-tertiary-fixed/30 to-transparent", accent: "text-on-tertiary-container" },
+];
+
+function categoryStyle(category: string) {
+  let hash = 0;
+  for (const ch of category) hash = (hash + ch.charCodeAt(0)) % CATEGORY_STYLES.length;
+  return CATEGORY_STYLES[hash];
+}
+
 function formatSalary(min: number | null, max: number | null): string {
   if (!min && !max) return "Bervariasi";
   const fmt = (n: number) =>
@@ -31,12 +45,12 @@ function formatSalary(min: number | null, max: number | null): string {
 
 function SkeletonCard() {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-5 animate-pulse space-y-3">
-      <div className="w-12 h-12 bg-slate-100 rounded-xl mx-auto" />
-      <div className="h-4 bg-slate-100 rounded w-3/4 mx-auto" />
-      <div className="h-3 bg-slate-100 rounded w-1/2 mx-auto" />
-      <div className="h-3 bg-slate-100 rounded w-full mt-2" />
-      <div className="h-8 bg-slate-100 rounded-xl mt-3" />
+    <div className="bg-white rounded-xl border border-surface-variant p-6 animate-pulse space-y-4">
+      <div className="w-14 h-14 bg-surface-container-high rounded-md" />
+      <div className="h-5 bg-surface-container-high rounded w-3/4" />
+      <div className="h-3 bg-surface-container-high rounded w-1/2" />
+      <div className="h-16 bg-surface-container rounded-md" />
+      <div className="h-8 bg-surface-container-high rounded-md" />
     </div>
   );
 }
@@ -84,42 +98,46 @@ export default function ExplorePage() {
   }, [professions, activeCategory, search]);
 
   return (
-    <div className="p-4 md:p-6 max-w-6xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Eksplorasi Profesi 🔍</h1>
-        <p className="text-slate-500 mt-1">
-          Temukan profesi yang cocok untukmu dari {professions.length} pilihan
+    <div className="p-4 md:p-10 max-w-container mx-auto w-full">
+      {/* Header */}
+      <div className="mb-10">
+        <h2 className="text-display-lg-mobile md:text-display-lg text-primary mb-4 tracking-tight">
+          Eksplorasi Profesi
+        </h2>
+        <p className="text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
+          Temukan jalur karir yang cocok dengan kepribadian dan latar belakangmu dari{" "}
+          {professions.length} pilihan. Gunakan filter untuk mempersempit fokusmu.
         </p>
       </div>
 
       {/* Search */}
-      <div className="relative">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">🔎</span>
+      <div className="relative max-w-xl mb-6">
+        <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" />
         <input
           type="text"
           placeholder="Cari nama profesi..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setActiveCategory("Semua"); }}
-          className="w-full pl-9 pr-9 py-2.5 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
+          className="w-full bg-surface-container rounded-md pl-10 pr-10 py-2.5 text-body-md border-none focus:outline-none focus:ring-2 focus:ring-secondary transition-shadow"
         />
         {search && (
           <button
             onClick={() => setSearch("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         )}
       </div>
 
-      {/* Category filter tabs */}
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+      {/* Category filter pills */}
+      <div className="flex flex-wrap gap-3 mb-10">
         <button
           onClick={() => { setActiveCategory("Semua"); setSearch(""); }}
-          className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition ${
+          className={`px-5 py-2 rounded-full text-sm font-semibold transition-all shadow-navy-sm ${
             activeCategory === "Semua"
-              ? "bg-blue-600 text-white shadow-sm"
-              : "bg-white border border-slate-200 text-slate-600 hover:border-blue-300"
+              ? "bg-primary-container text-white hover:shadow-navy"
+              : "bg-white border border-outline-variant/50 text-on-surface-variant hover:border-primary-container hover:text-primary-container hover:bg-primary-fixed/20"
           }`}
         >
           Semua ({professions.length})
@@ -128,10 +146,10 @@ export default function ExplorePage() {
           <button
             key={cat.category}
             onClick={() => { setActiveCategory(cat.category); setSearch(""); }}
-            className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition ${
+            className={`px-5 py-2 rounded-full text-sm font-semibold transition-all shadow-navy-sm ${
               activeCategory === cat.category
-                ? "bg-blue-600 text-white shadow-sm"
-                : "bg-white border border-slate-200 text-slate-600 hover:border-blue-300"
+                ? "bg-primary-container text-white hover:shadow-navy"
+                : "bg-white border border-outline-variant/50 text-on-surface-variant hover:border-primary-container hover:text-primary-container hover:bg-primary-fixed/20"
             }`}
           >
             {cat.emoji} {cat.category.split(" & ")[0]} ({cat.count})
@@ -141,48 +159,63 @@ export default function ExplorePage() {
 
       {/* Grid */}
       {loading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-16 text-slate-400">
-          <p className="text-4xl mb-3">🔍</p>
-          <p className="font-medium text-slate-600">Tidak ada profesi dengan nama itu</p>
-          <p className="text-sm mt-1">Coba kata kunci lain</p>
+        <div className="text-center py-16 text-outline">
+          <SearchX className="w-10 h-10 mx-auto mb-3" />
+          <p className="font-medium text-on-surface">Tidak ada profesi dengan nama itu</p>
+          <p className="text-sm mt-1 text-on-surface-variant">Coba kata kunci lain</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-10">
           {filtered.map((p) => {
             const isRec = recommendedSlugs.has(p.slug);
             const workTags = p.work_style_summary.split(" · ").filter(Boolean);
+            const style = categoryStyle(p.category);
             return (
               <div
                 key={p.id}
-                className="bg-white rounded-2xl border border-slate-200 hover:border-blue-300 hover:shadow-sm transition flex flex-col relative overflow-hidden"
+                className={`rounded-xl bg-white border border-surface-variant shadow-[0px_4px_24px_rgba(0,35,102,0.04)] hover-lift relative overflow-hidden group flex flex-col ${
+                  isRec ? "top-match-glow" : ""
+                }`}
               >
-                {isRec && (
-                  <div className="absolute top-2 right-2 bg-amber-50 text-amber-700 border border-amber-200 text-xs px-2 py-0.5 rounded-full font-medium z-10">
-                    ⭐ Cocok
-                  </div>
-                )}
-                <div className="p-4 flex flex-col flex-1">
-                  <div className="text-center mb-3">
-                    <div className="text-5xl leading-none mb-2">{p.emoji || "🎯"}</div>
-                    <h3 className="font-semibold text-slate-900 text-sm leading-tight">{p.name}</h3>
-                    <span className="inline-block mt-1.5 text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
-                      {p.category}
-                    </span>
+                <div className={`absolute inset-0 opacity-60 pointer-events-none ${style.overlay}`} />
+                <div className="relative z-10 p-6 flex flex-col flex-1">
+                  {isRec && (
+                    <div className="absolute top-0 right-0 bg-tertiary-fixed-dim text-on-tertiary-fixed font-label text-[11px] px-3 py-1.5 rounded-bl-lg font-bold shadow-navy-sm flex items-center gap-1">
+                      <Star className="w-3.5 h-3.5" /> COCOK
+                    </div>
+                  )}
+
+                  <div className="w-14 h-14 rounded-md bg-white shadow-navy-sm border border-primary-fixed/60 flex items-center justify-center text-3xl mb-5">
+                    {p.emoji || "🎯"}
                   </div>
 
-                  <div className="text-xs text-slate-500 space-y-0.5 mb-3">
-                    <div>💰 {formatSalary(p.salary_min, p.salary_max)}</div>
-                    <div>🎓 {p.education_years_min} tahun pendidikan</div>
+                  <div className="mb-5">
+                    <h3 className="text-xl text-primary mb-1.5 font-bold">{p.name}</h3>
+                    <p className={`font-medium text-sm ${style.accent}`}>{p.category}</p>
+                  </div>
+
+                  <div className="space-y-3 mb-6 bg-surface-container-lowest/50 p-4 rounded-md border border-surface-variant">
+                    <div className="flex items-start gap-3 text-sm text-on-surface">
+                      <GraduationCap className="w-4 h-4 text-outline mt-0.5 flex-shrink-0" />
+                      <span className="font-medium">{p.education_years_min} tahun pendidikan</span>
+                    </div>
+                    <div className="flex items-start gap-3 text-sm text-on-surface">
+                      <TrendingUp className="w-4 h-4 text-tertiary-fixed-dim mt-0.5 flex-shrink-0" />
+                      <span className="font-medium">{formatSalary(p.salary_min, p.salary_max)}</span>
+                    </div>
                   </div>
 
                   {workTags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-3">
+                    <div className="flex flex-wrap gap-2 mb-6">
                       {workTags.slice(0, 3).map((tag) => (
-                        <span key={tag} className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
+                        <span
+                          key={tag}
+                          className="bg-surface-container-low border border-outline-variant/20 px-3 py-1.5 rounded text-xs font-medium text-on-surface-variant"
+                        >
                           {tag}
                         </span>
                       ))}
@@ -192,15 +225,15 @@ export default function ExplorePage() {
                   <div className="mt-auto grid grid-cols-2 gap-2">
                     <Link
                       href={`/explore/${p.slug}`}
-                      className="text-center text-xs font-medium text-slate-700 hover:text-blue-600 py-2 border border-slate-200 hover:border-blue-300 rounded-xl transition"
+                      className="text-center text-sm font-semibold text-on-surface-variant hover:text-primary-container py-2 border border-outline-variant/50 hover:border-primary-container rounded-full transition"
                     >
                       Detail
                     </Link>
                     <Link
                       href={`/chat/${p.slug}`}
-                      className="text-center text-xs font-medium text-blue-600 hover:text-white hover:bg-blue-600 py-2 border border-blue-200 hover:border-blue-600 rounded-xl transition"
+                      className="flex items-center justify-center gap-1 text-sm font-semibold text-secondary hover:text-white hover:bg-secondary py-2 border border-secondary/30 hover:border-secondary rounded-full transition"
                     >
-                      Chat AI →
+                      Chat AI <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>
                 </div>
@@ -211,7 +244,7 @@ export default function ExplorePage() {
       )}
 
       {!loading && filtered.length > 0 && (
-        <p className="text-center text-sm text-slate-400">
+        <p className="text-center text-sm text-outline">
           Menampilkan {filtered.length} dari {professions.length} profesi
         </p>
       )}

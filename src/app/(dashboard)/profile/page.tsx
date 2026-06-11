@@ -319,23 +319,23 @@ export default function ProfilePage() {
   return (
     <div className="p-4 md:p-6 max-w-6xl mx-auto">
       <ToastContainer />
-      <h1 className="text-2xl font-bold text-slate-900 mb-6">Profil Saya</h1>
+      <h1 className="text-display-lg-mobile text-primary mb-8">Profil Saya</h1>
 
       <div className="flex flex-col md:flex-row gap-6">
         {/* Sidebar */}
         <aside className="md:w-64 shrink-0 space-y-4">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+          <div className="glass-card rounded-lg border border-outline-variant/30 shadow-navy-sm p-6 space-y-4">
             <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-2xl mx-auto mb-3">
+              <div className="w-16 h-16 bg-surface-container-low rounded-full flex items-center justify-center text-3xl mx-auto mb-3">
                 {profileMe?.profile?.segment === "sma" ? "📚" : "👤"}
               </div>
-              <p className="font-semibold text-slate-900">{total}%</p>
-              <p className="text-xs text-slate-500">Kelengkapan profil</p>
+              <p className="text-headline-md text-on-surface">{total}%</p>
+              <p className="font-label text-label-sm text-on-surface-variant">Kelengkapan profil</p>
             </div>
             <ProgressBar
               value={total}
-              color={total >= 100 ? "bg-green-500" : "bg-blue-500"}
-              height="h-2"
+              color={total >= 100 ? "bg-tertiary-fixed-dim" : "bg-secondary"}
+              height="h-2.5"
             />
             {total >= 100 && (
               <div className="text-center">
@@ -344,24 +344,28 @@ export default function ProfilePage() {
             )}
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-3 space-y-1">
+          <div className="glass-card rounded-lg border border-outline-variant/30 shadow-navy-sm p-3 space-y-1">
             {SECTIONS.map((s) => {
               const done = sections[s.key as keyof typeof sections];
               return (
                 <button
                   key={s.key}
                   onClick={() => setActiveSection(s.key)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm transition ${
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-md text-left text-sm transition ${
                     activeSection === s.key
-                      ? "bg-blue-50 text-blue-700 font-medium"
-                      : "text-slate-600 hover:bg-slate-50"
+                      ? "bg-secondary-container/10 text-secondary font-medium shadow-navy-sm"
+                      : "text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface"
                   }`}
                 >
-                  <span>{s.icon}</span>
+                  <span className="text-lg">{s.icon}</span>
                   <span className="flex-1">{s.label}</span>
-                  <span className={done ? "text-green-500" : "text-slate-300"}>
-                    {done ? "✅" : "⬜"}
-                  </span>
+                  {done ? (
+                    <svg className="w-5 h-5 text-on-tertiary-container" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+                    </svg>
+                  ) : (
+                    <span className="w-4 h-4 rounded border border-outline-variant bg-surface-bright" />
+                  )}
                 </button>
               );
             })}
@@ -369,15 +373,15 @@ export default function ProfilePage() {
         </aside>
 
         {/* Main Form Area */}
-        <main className="flex-1 bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+        <main className="flex-1 glass-card rounded-lg border border-outline-variant/30 shadow-navy-sm p-6 md:p-8">
 
           {/* ACADEMIC */}
           {activeSection === "academic" && (
             <div className="space-y-5">
-              <h2 className="text-lg font-bold text-slate-900">📚 Data Akademik</h2>
+              <h2 className="text-lg font-bold text-primary">📚 Data Akademik</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
                     Jenjang Pendidikan
                   </label>
                   <select
@@ -385,7 +389,7 @@ export default function ProfilePage() {
                     onChange={(e) =>
                       setAcademic((a) => ({ ...a, education_level: e.target.value }))
                     }
-                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-slate-900"
+                    className="w-full border border-outline-variant rounded-md px-4 py-2.5 bg-surface-container-lowest text-on-surface focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all"
                   >
                     <option value="">Pilih jenjang</option>
                     {["SMP", "SMA", "SMK", "D3", "S1", "S2", "S3"].map((j) => (
@@ -396,7 +400,7 @@ export default function ProfilePage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
                     Nama Sekolah/Kampus
                   </label>
                   <input
@@ -405,12 +409,12 @@ export default function ProfilePage() {
                     onChange={(e) =>
                       setAcademic((a) => ({ ...a, school_name: e.target.value }))
                     }
-                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-outline-variant rounded-md px-4 py-2.5 bg-surface-container-lowest text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all"
                     placeholder="SMA Negeri 1 Jakarta..."
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
                     Kelas / Semester
                   </label>
                   <input
@@ -419,12 +423,12 @@ export default function ProfilePage() {
                     onChange={(e) =>
                       setAcademic((a) => ({ ...a, current_grade: e.target.value }))
                     }
-                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-outline-variant rounded-md px-4 py-2.5 bg-surface-container-lowest text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all"
                     placeholder="Kelas 11 / Semester 3..."
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
                     Nilai Rata-rata (0-100)
                   </label>
                   <input
@@ -435,13 +439,13 @@ export default function ProfilePage() {
                     onChange={(e) =>
                       setAcademic((a) => ({ ...a, avg_score: e.target.value }))
                     }
-                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border border-outline-variant rounded-md px-4 py-2.5 bg-surface-container-lowest text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all"
                     placeholder="85"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
                   Mata Pelajaran Favorit
                 </label>
                 <TagInput
@@ -453,7 +457,7 @@ export default function ProfilePage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
                   Prestasi / Penghargaan
                 </label>
                 <TagInput
@@ -467,7 +471,7 @@ export default function ProfilePage() {
               <button
                 onClick={saveAcademic}
                 disabled={saving}
-                className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-xl px-6 py-2.5 font-medium transition flex items-center gap-2"
+                className="bg-secondary hover:bg-secondary-container disabled:opacity-50 text-on-secondary text-button rounded-md px-8 py-3 shadow-navy-sm hover:shadow-navy transition-all flex items-center gap-2"
               >
                 {saving ? (
                   <>
@@ -483,13 +487,13 @@ export default function ProfilePage() {
           {/* PERSONALITY */}
           {activeSection === "personality" && (
             <div className="space-y-8">
-              <h2 className="text-lg font-bold text-slate-900">
+              <h2 className="text-lg font-bold text-primary">
                 🧠 Kepribadian &amp; Work Style
               </h2>
 
               {/* RIASEC */}
               <div>
-                <h3 className="font-semibold text-slate-800 mb-4">Skor RIASEC</h3>
+                <h3 className="font-semibold text-on-surface mb-4">Skor RIASEC</h3>
                 <div className="space-y-5">
                   {RIASEC_DEFS.map((r) => (
                     <RIASECSlider
@@ -508,13 +512,13 @@ export default function ProfilePage() {
 
               {/* Work Style */}
               <div>
-                <h3 className="font-semibold text-slate-800 mb-4">
+                <h3 className="font-semibold text-on-surface mb-4">
                   Gaya Kerja (Work Style)
                 </h3>
                 <div className="space-y-5">
                   {WS_DIMS.map((dim) => (
                     <div key={dim.key}>
-                      <div className="flex justify-between text-xs text-slate-500 mb-2">
+                      <div className="flex justify-between font-label text-label-sm text-on-surface-variant mb-2">
                         <span>{dim.leftLabel}</span>
                         <span>{dim.rightLabel}</span>
                       </div>
@@ -530,7 +534,7 @@ export default function ProfilePage() {
                             [dim.key]: parseFloat(e.target.value),
                           }))
                         }
-                        className="w-full accent-blue-600 h-2 rounded-full"
+                        className="w-full accent-secondary h-2 rounded-full"
                       />
                     </div>
                   ))}
@@ -540,7 +544,7 @@ export default function ProfilePage() {
               <button
                 onClick={savePersonality}
                 disabled={saving}
-                className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-xl px-6 py-2.5 font-medium transition flex items-center gap-2"
+                className="bg-secondary hover:bg-secondary-container disabled:opacity-50 text-on-secondary text-button rounded-md px-8 py-3 shadow-navy-sm hover:shadow-navy transition-all flex items-center gap-2"
               >
                 {saving ? (
                   <>
@@ -556,9 +560,9 @@ export default function ProfilePage() {
           {/* INTERESTS */}
           {activeSection === "interests" && (
             <div className="space-y-5">
-              <h2 className="text-lg font-bold text-slate-900">💡 Minat &amp; Hobi</h2>
+              <h2 className="text-lg font-bold text-primary">💡 Minat &amp; Hobi</h2>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-on-surface-variant mb-2">
                   Domain Minat
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -578,12 +582,12 @@ export default function ProfilePage() {
                         }
                         className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 text-sm transition ${
                           sel
-                            ? "border-blue-500 bg-blue-50"
-                            : "border-slate-200 hover:border-blue-300"
+                            ? "border-secondary bg-primary-fixed/20"
+                            : "border-outline-variant/50 hover:border-secondary/50"
                         }`}
                       >
                         <span className="text-xl">{i.icon}</span>
-                        <span className="text-xs font-medium text-slate-700">
+                        <span className="text-xs font-medium text-on-surface">
                           {i.label}
                         </span>
                       </button>
@@ -592,7 +596,7 @@ export default function ProfilePage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
                   Hobi
                 </label>
                 <TagInput
@@ -602,7 +606,7 @@ export default function ProfilePage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
                   Ekstrakurikuler / Organisasi
                 </label>
                 <TagInput
@@ -615,7 +619,7 @@ export default function ProfilePage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
                     Hard Skills
                   </label>
                   <TagInput
@@ -627,7 +631,7 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
                     Soft Skills
                   </label>
                   <TagInput
@@ -642,7 +646,7 @@ export default function ProfilePage() {
               <button
                 onClick={saveInterests}
                 disabled={saving}
-                className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-xl px-6 py-2.5 font-medium transition flex items-center gap-2"
+                className="bg-secondary hover:bg-secondary-container disabled:opacity-50 text-on-secondary text-button rounded-md px-8 py-3 shadow-navy-sm hover:shadow-navy transition-all flex items-center gap-2"
               >
                 {saving ? (
                   <>
@@ -658,9 +662,9 @@ export default function ProfilePage() {
           {/* GOALS */}
           {activeSection === "goals" && (
             <div className="space-y-5">
-              <h2 className="text-lg font-bold text-slate-900">🎯 Kondisi &amp; Goals</h2>
+              <h2 className="text-lg font-bold text-primary">🎯 Kondisi &amp; Goals</h2>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
                   Kondisi Finansial Keluarga
                 </label>
                 <select
@@ -668,7 +672,7 @@ export default function ProfilePage() {
                   onChange={(e) =>
                     setGoals((g) => ({ ...g, financial_condition: e.target.value }))
                   }
-                  className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-slate-900"
+                  className="w-full border border-outline-variant rounded-md px-4 py-2.5 bg-surface-container-lowest text-on-surface focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all"
                 >
                   <option value="">Pilih kondisi</option>
                   <option value="rendah">Rendah</option>
@@ -677,7 +681,7 @@ export default function ProfilePage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
                   Target Pendidikan
                 </label>
                 <textarea
@@ -687,11 +691,11 @@ export default function ProfilePage() {
                   }
                   rows={2}
                   placeholder="Ingin kuliah di jurusan Teknik Informatika, UI..."
-                  className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-outline-variant rounded-md px-4 py-2.5 bg-surface-container-lowest text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
                   Target Karier 5 Tahun ke Depan
                 </label>
                 <textarea
@@ -701,11 +705,11 @@ export default function ProfilePage() {
                   }
                   rows={2}
                   placeholder="Menjadi software engineer di startup teknologi..."
-                  className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-outline-variant rounded-md px-4 py-2.5 bg-surface-container-lowest text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
                   Hambatan yang Dirasakan Saat Ini
                 </label>
                 <textarea
@@ -715,13 +719,13 @@ export default function ProfilePage() {
                   }
                   rows={2}
                   placeholder="Tidak tahu harus mulai dari mana, biaya kuliah..."
-                  className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border border-outline-variant rounded-md px-4 py-2.5 bg-surface-container-lowest text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all"
                 />
               </div>
               <button
                 onClick={saveGoals}
                 disabled={saving}
-                className="bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-xl px-6 py-2.5 font-medium transition flex items-center gap-2"
+                className="bg-secondary hover:bg-secondary-container disabled:opacity-50 text-on-secondary text-button rounded-md px-8 py-3 shadow-navy-sm hover:shadow-navy transition-all flex items-center gap-2"
               >
                 {saving ? (
                   <>
@@ -737,13 +741,13 @@ export default function ProfilePage() {
           {/* DOCUMENTS */}
           {activeSection === "documents" && (
             <div className="space-y-5">
-              <h2 className="text-lg font-bold text-slate-900">📄 Dokumen (Opsional)</h2>
-              <div className="border-2 border-dashed border-slate-300 rounded-2xl p-10 text-center">
+              <h2 className="text-lg font-bold text-primary">📄 Dokumen (Opsional)</h2>
+              <div className="border-2 border-dashed border-outline-variant rounded-lg p-10 text-center bg-surface-container-low/50">
                 <p className="text-3xl mb-2">📁</p>
-                <p className="text-slate-600 font-medium">
+                <p className="text-on-surface font-medium">
                   Upload Rapor, Transkrip, atau Sertifikat
                 </p>
-                <p className="text-slate-400 text-sm mt-1">
+                <p className="text-on-surface-variant text-sm mt-1">
                   Fitur ini akan segera tersedia
                 </p>
                 <div className="mt-2">
@@ -752,16 +756,16 @@ export default function ProfilePage() {
               </div>
               {(profileMe?.documents ?? []).length > 0 && (
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-slate-700">
+                  <p className="text-sm font-medium text-on-surface">
                     Dokumen tersimpan:
                   </p>
                   {profileMe?.documents.map((doc) => (
                     <div
                       key={doc.id}
-                      className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg"
+                      className="flex items-center gap-3 p-3 bg-surface-container-low rounded-md border border-outline-variant/20"
                     >
                       <span>📄</span>
-                      <span className="text-sm text-slate-700 flex-1">
+                      <span className="text-sm text-on-surface flex-1">
                         {doc.file_name}
                       </span>
                       <PillBadge variant="blue">{doc.document_type}</PillBadge>

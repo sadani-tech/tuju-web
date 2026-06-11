@@ -35,17 +35,17 @@ export function TagInput({
   };
 
   return (
-    <div className="border border-slate-300 rounded-lg px-3 py-2 flex flex-wrap gap-2 focus-within:ring-2 focus-within:ring-blue-500 bg-white min-h-[44px]">
+    <div className="border border-outline-variant rounded-md px-3 py-2 flex flex-wrap gap-2 focus-within:border-secondary focus-within:ring-2 focus-within:ring-secondary/20 bg-surface-container-lowest min-h-[44px] transition-all">
       {value.map((tag) => (
         <span
           key={tag}
-          className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 text-xs font-medium px-2.5 py-1 rounded-full"
+          className="inline-flex items-center gap-1 bg-primary-fixed text-on-primary-fixed-variant text-xs font-medium px-2.5 py-1 rounded-full"
         >
           {tag}
           <button
             type="button"
             onClick={() => removeTag(tag)}
-            className="text-blue-500 hover:text-blue-700 ml-0.5"
+            className="text-on-primary-fixed-variant/70 hover:text-on-primary-fixed ml-0.5"
           >
             ×
           </button>
@@ -56,7 +56,7 @@ export function TagInput({
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKey}
         placeholder={value.length === 0 ? placeholder : ""}
-        className="flex-1 min-w-[120px] outline-none text-sm text-slate-900 bg-transparent"
+        className="flex-1 min-w-[120px] outline-none text-sm text-on-surface bg-transparent placeholder:text-outline/60"
       />
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ArrowLeft, ArrowRight, CheckCircle2, MessageCircle } from "lucide-react";
 import { chatApi } from "@/lib/api";
 import { ChatSession } from "@/types";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
@@ -26,48 +27,45 @@ export default function ChatHistoryPage() {
   }
 
   return (
-    <div className="p-4 md:p-6 max-w-2xl mx-auto space-y-4">
-      <div className="flex items-center gap-3">
+    <div className="p-4 md:p-10 max-w-3xl mx-auto space-y-8">
+      {/* Header */}
+      <div>
         <Link
           href="/chat"
-          className="text-slate-500 hover:text-slate-800 transition p-1 rounded-lg"
+          className="flex items-center gap-2 text-secondary font-label text-label-sm hover:underline mb-2"
         >
-          ←
+          <ArrowLeft className="w-4 h-4" /> Kembali ke AI Expert
         </Link>
-        <div>
-          <h1 className="text-xl font-bold text-slate-900">Riwayat Chat</h1>
-          <p className="text-sm text-slate-500">{sessions.length} sesi</p>
-        </div>
+        <h1 className="text-display-lg-mobile text-gradient mb-2">Riwayat Chat</h1>
+        <p className="text-body-md text-on-surface-variant">{sessions.length} sesi konsultasi</p>
       </div>
 
       {sessions.length === 0 ? (
-        <div className="text-center py-16 text-slate-400 space-y-3">
-          <p className="text-4xl">💬</p>
+        <div className="text-center py-16 text-on-surface-variant space-y-3">
+          <MessageCircle className="w-10 h-10 mx-auto text-outline" />
           <p>Belum ada sesi chat</p>
           <Link
             href="/chat"
-            className="inline-block text-sm text-blue-600 hover:underline"
+            className="inline-flex items-center gap-1 text-sm text-secondary font-semibold hover:underline"
           >
-            Mulai chat sekarang →
+            Mulai chat sekarang <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {sessions.map((session) => (
             <div
               key={session.session_id}
-              className="bg-white rounded-2xl border border-slate-200 p-4 hover:border-blue-300 transition"
+              className="glass-card rounded-lg shadow-navy-sm border border-outline-variant/30 p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-navy border-l-4 border-l-transparent hover:border-l-secondary-container"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-xl flex-shrink-0">
+                  <div className="w-12 h-12 bg-primary-fixed rounded-full border border-primary/10 flex items-center justify-center text-xl flex-shrink-0">
                     {session.profession.emoji || "🎯"}
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900 text-sm">
-                      {session.profession.name}
-                    </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="font-semibold text-primary">{session.profession.name}</p>
+                    <p className="font-label text-label-sm text-on-surface-variant mt-0.5">
                       {session.message_count} pesan ·{" "}
                       {new Date(session.started_at).toLocaleDateString("id-ID", {
                         day: "numeric",
@@ -80,21 +78,21 @@ export default function ChatHistoryPage() {
 
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {session.points_awarded && (
-                    <span className="text-xs bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded-full">
-                      ✅ +30 pts
+                    <span className="flex items-center gap-1 text-xs bg-tertiary-fixed-dim/10 text-on-tertiary-container border border-tertiary-fixed-dim/20 px-3 py-1 rounded-full font-semibold">
+                      <CheckCircle2 className="w-3 h-3" /> +30 pts
                     </span>
                   )}
                   <Link
                     href={`/chat/${session.profession.slug}?session=${session.session_id}`}
-                    className="text-xs font-medium text-blue-600 hover:text-blue-700 border border-blue-200 hover:border-blue-400 px-3 py-1.5 rounded-lg transition"
+                    className="flex items-center gap-1 text-xs font-semibold text-secondary border border-secondary/30 hover:border-secondary hover:bg-secondary/5 px-3 py-1.5 rounded-full transition"
                   >
-                    Lanjutkan →
+                    Lanjutkan <ArrowRight className="w-3 h-3" />
                   </Link>
                 </div>
               </div>
 
               {session.last_message_preview && (
-                <p className="mt-3 text-xs text-slate-500 line-clamp-2 pl-13">
+                <p className="mt-3 text-sm text-on-surface-variant line-clamp-2 pl-[60px]">
                   {session.last_message_preview}
                 </p>
               )}
