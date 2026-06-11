@@ -29,32 +29,37 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
-        <h1 className="text-2xl font-bold text-slate-900 mb-2">Masuk ke Tuju</h1>
-        <p className="text-slate-500 mb-6">Lanjutkan perjalananmu</p>
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 relative">
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(37,82,202,0.08),transparent_60%),radial-gradient(ellipse_at_bottom_left,rgba(0,245,212,0.06),transparent_50%)]"
+      />
+      <div className="relative z-10 w-full max-w-md glass-card rounded-lg shadow-navy p-8">
+        <p className="text-headline-md font-bold text-primary mb-6">Tuju</p>
+        <h1 className="text-headline-md text-primary mb-2">Masuk ke Tuju</h1>
+        <p className="text-on-surface-variant mb-6">Lanjutkan perjalananmu</p>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm">{error}</div>
+          <div className="mb-4 p-3 bg-error-container text-on-error-container rounded-md text-sm">{error}</div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+            <label className="block font-label text-label-sm uppercase text-on-surface-variant mb-2">Email</label>
             <input
               type="email"
               required
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-tuju"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
+            <label className="block font-label text-label-sm uppercase text-on-surface-variant mb-2">Password</label>
             <input
               type="password"
               required
-              className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-tuju"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
             />
@@ -62,15 +67,15 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg transition disabled:opacity-50"
+            className="w-full py-3 bg-secondary hover:bg-secondary-container text-on-secondary text-button font-semibold rounded-md transition disabled:opacity-50"
           >
             {loading ? "Masuk..." : "Masuk"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-500">
+        <p className="mt-6 text-center text-sm text-on-surface-variant">
           Belum punya akun?{" "}
-          <Link href="/register" className="text-blue-600 font-medium hover:underline">
+          <Link href="/register" className="text-secondary font-medium hover:underline">
             Daftar gratis
           </Link>
         </p>

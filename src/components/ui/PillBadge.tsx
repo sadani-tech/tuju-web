@@ -8,12 +8,12 @@ interface PillBadgeProps {
 }
 
 const variantClasses: Record<PillVariant, string> = {
-  green: "bg-green-100 text-green-700",
+  green: "bg-tertiary-fixed-dim/20 text-on-tertiary-fixed-variant",
   amber: "bg-amber-100 text-amber-700",
-  blue: "bg-blue-100 text-blue-700",
-  slate: "bg-slate-100 text-slate-600",
-  indigo: "bg-indigo-100 text-indigo-700",
-  red: "bg-red-100 text-red-600",
+  blue: "bg-primary-fixed text-on-primary-fixed-variant",
+  slate: "bg-surface-variant text-on-surface-variant",
+  indigo: "bg-accent-purple/10 text-accent-purple",
+  red: "bg-error-container text-on-error-container",
 };
 
 export function PillBadge({ children, variant = "slate" }: PillBadgeProps) {

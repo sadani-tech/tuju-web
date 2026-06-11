@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { Sparkles, RefreshCw, MessageSquare, ArrowRight, UserSearch, Target } from "lucide-react";
 import { reportApi, authApi } from "@/lib/api";
 import {
   LifePathReport,
@@ -127,20 +128,20 @@ export default function ReportPage() {
   if (state === "no_report") {
     return (
       <div className="p-6 max-w-2xl mx-auto flex items-center justify-center min-h-[70vh]">
-        <div className="text-center space-y-4">
-          <p className="text-5xl">🎯</p>
-          <h2 className="text-2xl font-bold text-slate-900">
+        <div className="glass-card rounded-lg shadow-navy p-10 text-center space-y-4">
+          <Target className="w-12 h-12 text-secondary mx-auto" />
+          <h1 className="text-headline-md text-primary">
             Kamu belum punya Life Path Report
-          </h2>
-          <p className="text-slate-500">
+          </h1>
+          <p className="text-on-surface-variant">
             Generate report untuk melihat rekomendasi jalur hidupmu berdasarkan
             profil yang sudah diisi
           </p>
           <button
             onClick={handleGenerate}
-            className="bg-blue-600 hover:bg-blue-500 text-white rounded-xl px-8 py-3 font-semibold transition text-lg"
+            className="inline-flex items-center gap-2 bg-secondary hover:bg-secondary-container text-on-secondary rounded-md px-8 py-3 text-button font-semibold transition shadow-navy"
           >
-            Generate Report Sekarang ✨
+            <Sparkles className="w-4 h-4" /> Generate Report Sekarang
           </button>
         </div>
       </div>
@@ -150,7 +151,7 @@ export default function ReportPage() {
   // State: Generating
   if (state === "generating") {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+      <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="text-center space-y-6 max-w-sm">
           <LoadingSpinner size="lg" />
           <div className="space-y-3">
@@ -164,11 +165,11 @@ export default function ReportPage() {
                 <span className="text-lg">
                   {i < generatingMsg ? "✅" : i === generatingMsg ? "🔄" : "⏳"}
                 </span>
-                <p className="text-slate-700 font-medium">{msg}</p>
+                <p className="text-on-surface font-medium">{msg}</p>
               </div>
             ))}
           </div>
-          <p className="text-slate-400 text-sm">Biasanya butuh 30-60 detik...</p>
+          <p className="text-on-surface-variant text-sm">Biasanya butuh 30-60 detik...</p>
         </div>
       </div>
     );
@@ -178,12 +179,12 @@ export default function ReportPage() {
   if (state === "failed") {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center space-y-4">
+        <div className="glass-card rounded-lg shadow-navy p-8 text-center space-y-4">
           <p className="text-4xl">😔</p>
-          <h2 className="text-xl font-bold text-slate-900">Gagal membuat report</h2>
+          <h1 className="text-headline-md text-primary">Gagal membuat report</h1>
           <button
             onClick={handleGenerate}
-            className="bg-blue-600 hover:bg-blue-500 text-white rounded-xl px-6 py-3 font-medium transition"
+            className="bg-secondary hover:bg-secondary-container text-on-secondary rounded-md px-6 py-3 text-button font-semibold transition"
           >
             Coba Lagi
           </button>
@@ -194,12 +195,19 @@ export default function ReportPage() {
 
   // State: Done
   return (
-    <div className="p-4 md:p-6 max-w-6xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">Life Path Report</h1>
-          <p className="text-slate-500 text-sm mt-0.5">
-            Versi {report?.version} &middot;{" "}
+    <div className="p-4 md:p-10 max-w-container mx-auto space-y-gutter">
+      {/* Header */}
+      <header className="text-center max-w-2xl mx-auto">
+        <h1 className="text-display-lg-mobile md:text-display-lg text-primary mb-3">
+          Life Path Report
+        </h1>
+        <p className="text-body-lg text-on-surface-variant">
+          Analisis mendalam berdasarkan profilmu untuk memandu langkah selanjutnya
+          di dunia pendidikan dan karier.
+        </p>
+        <div className="flex items-center justify-center gap-3 mt-4">
+          <span className="font-label text-label-sm text-on-surface-variant">
+            Versi {report?.version} ·{" "}
             {report?.generated_at
               ? new Date(report.generated_at).toLocaleDateString("id-ID", {
                   day: "numeric",
@@ -207,148 +215,158 @@ export default function ReportPage() {
                   year: "numeric",
                 })
               : "-"}
-          </p>
+          </span>
+          <button
+            onClick={handleGenerate}
+            className="inline-flex items-center gap-1.5 border border-outline-variant hover:border-secondary rounded-md px-3 py-1.5 font-label text-label-sm text-on-surface-variant hover:text-secondary transition"
+          >
+            <RefreshCw className="w-3.5 h-3.5" /> Refresh Report
+          </button>
         </div>
-        <button
-          onClick={handleGenerate}
-          className="border border-slate-200 hover:border-blue-300 rounded-xl px-4 py-2 text-sm font-medium text-slate-700 transition"
-        >
-          🔄 Refresh Report
-        </button>
-      </div>
+      </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-        {/* Left: Profile Summary */}
-        <div className="md:col-span-4 space-y-4">
-          {report?.strengths && report.strengths.length > 0 && (
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-              <h3 className="font-semibold text-slate-900 mb-3">⚡ Kekuatan Kamu</h3>
-              <div className="flex flex-wrap gap-2">
-                {report.strengths.map((s, i) => (
-                  <PillBadge key={i} variant="green">
-                    {s}
-                  </PillBadge>
-                ))}
-              </div>
+      {/* Ringkasan Kepribadian */}
+      {(report?.ai_narrative || (report?.strengths?.length ?? 0) > 0) && (
+        <section className="glass-card accent-strip-teal rounded-lg p-6 md:p-8 shadow-navy-sm">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary">
+              <UserSearch className="w-5 h-5" />
             </div>
-          )}
-
-          {report?.areas_to_grow && report.areas_to_grow.length > 0 && (
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-              <h3 className="font-semibold text-slate-900 mb-3">🌱 Area Berkembang</h3>
-              <div className="flex flex-wrap gap-2">
-                {report.areas_to_grow.map((a, i) => (
-                  <PillBadge key={i} variant="amber">
-                    {a}
-                  </PillBadge>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Right: Narrative + Recommendations */}
-        <div className="md:col-span-8 space-y-4">
+            <h2 className="text-headline-md text-primary">Ringkasan Kepribadian</h2>
+          </div>
           {report?.ai_narrative && (
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-              <div className="border-l-4 border-blue-500 pl-4">
-                <h3 className="font-semibold text-slate-900 mb-3">
-                  🤖 Analisis Personal
-                </h3>
-                <div className="text-slate-700 leading-relaxed text-[15px] whitespace-pre-line">
-                  {report.ai_narrative}
+            <p className="text-on-surface leading-relaxed text-[15px] whitespace-pre-line mb-6">
+              {report.ai_narrative}
+            </p>
+          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {report?.strengths && report.strengths.length > 0 && (
+              <div className="bg-surface-container-low rounded-md p-4">
+                <p className="font-label text-label-sm uppercase text-on-surface-variant mb-2">Kekuatan Kamu</p>
+                <div className="flex flex-wrap gap-2">
+                  {report.strengths.map((s, i) => (
+                    <PillBadge key={i} variant="green">{s}</PillBadge>
+                  ))}
                 </div>
               </div>
-            </div>
-          )}
-
-          {/* Profession segment */}
-          {isProfessionSegment && (
-            <div className="space-y-3">
-              <h3 className="font-semibold text-slate-900">🎯 Top Profesi Untukmu</h3>
-              {(report?.recommendations || []).map((item, i) => (
-                <ProfessionCard
-                  key={item.profession_id || i}
-                  item={item}
-                  rank={item.rank || i + 1}
-                />
-              ))}
-            </div>
-          )}
-
-          {/* Layered output for SMA/SMP */}
-          {!isProfessionSegment && layered && (
-            <div className="space-y-6">
-              {layered.layers.map((layer) => (
-                <div key={layer.layer}>
-                  <h3 className="font-semibold text-slate-900 mb-3">
-                    {layer.layer === 1
-                      ? "🎯"
-                      : layer.layer === 2
-                      ? "📚"
-                      : "💼"}{" "}
-                    {layer.label}
-                  </h3>
-                  <div className="space-y-3">
-                    {layer.type === "profession" &&
-                      (layer.items as RecommendationItem[]).map((item, i) => (
-                        <ProfessionCard
-                          key={i}
-                          item={item as RecommendationItem}
-                          rank={(item as RecommendationItem).rank || i + 1}
-                        />
-                      ))}
-                    {layer.type === "university_major" &&
-                      (layer.items as MajorResult[]).map((item, i) => (
-                        <MajorCard
-                          key={i}
-                          item={item as MajorResult}
-                          rank={(item as MajorResult).rank || i + 1}
-                        />
-                      ))}
-                    {layer.type === "highschool_track" &&
-                      (layer.items as TrackResult[]).map((item, i) => (
-                        <TrackCard
-                          key={i}
-                          item={item as TrackResult}
-                          rank={(item as TrackResult).rank || i + 1}
-                        />
-                      ))}
-                  </div>
+            )}
+            {report?.areas_to_grow && report.areas_to_grow.length > 0 && (
+              <div className="bg-surface-container-low rounded-md p-4">
+                <p className="font-label text-label-sm uppercase text-on-surface-variant mb-2">Area Berkembang</p>
+                <div className="flex flex-wrap gap-2">
+                  {report.areas_to_grow.map((a, i) => (
+                    <PillBadge key={i} variant="amber">{a}</PillBadge>
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
-          {/* Fallback: non-profession segment without layered data */}
-          {!isProfessionSegment && !layered && report?.recommendations && (
-            <div className="space-y-3">
-              <h3 className="font-semibold text-slate-900">🎯 Rekomendasi</h3>
-              {report.recommendations.map((item, i) => (
-                <ProfessionCard
-                  key={i}
-                  item={item}
-                  rank={item.rank || i + 1}
-                />
-              ))}
-            </div>
-          )}
+      {/* Rekomendasi */}
+      <section>
+        <div className="flex items-center justify-center gap-2 mb-6">
+          <div className="w-7 h-7 rounded-full bg-secondary text-on-secondary flex items-center justify-center">
+            <Target className="w-4 h-4" />
+          </div>
+          <h2 className="text-headline-md text-primary text-center">
+            Rekomendasi Jurusan &amp; Profesi
+          </h2>
         </div>
-      </div>
 
-      {/* AI Chat CTA */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-5 text-white text-center space-y-2">
-        <p className="font-semibold text-lg">Mau tahu lebih lanjut tentang profesi ini?</p>
-        <p className="text-blue-200 text-sm">
-          Chat langsung dengan AI yang berperan sebagai profesional di bidang itu
-        </p>
-        <Link
-          href="/chat"
-          className="inline-block mt-2 bg-white text-blue-600 font-semibold px-6 py-2.5 rounded-xl hover:bg-blue-50 transition text-sm"
-        >
-          💬 Chat dengan AI Expert →
-        </Link>
-      </div>
+        {/* Profession segment */}
+        {isProfessionSegment && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+            {(report?.recommendations || []).map((item, i) => (
+              <ProfessionCard
+                key={item.profession_id || i}
+                item={item}
+                rank={item.rank || i + 1}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Layered output for SMA/SMP */}
+        {!isProfessionSegment && layered && (
+          <div className="space-y-8">
+            {layered.layers.map((layer) => (
+              <div key={layer.layer}>
+                <h3 className="font-semibold text-primary mb-3">{layer.label}</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {layer.type === "profession" &&
+                    (layer.items as RecommendationItem[]).map((item, i) => (
+                      <ProfessionCard
+                        key={i}
+                        item={item as RecommendationItem}
+                        rank={(item as RecommendationItem).rank || i + 1}
+                      />
+                    ))}
+                  {layer.type === "university_major" &&
+                    (layer.items as MajorResult[]).map((item, i) => (
+                      <MajorCard
+                        key={i}
+                        item={item as MajorResult}
+                        rank={(item as MajorResult).rank || i + 1}
+                      />
+                    ))}
+                  {layer.type === "highschool_track" &&
+                    (layer.items as TrackResult[]).map((item, i) => (
+                      <TrackCard
+                        key={i}
+                        item={item as TrackResult}
+                        rank={(item as TrackResult).rank || i + 1}
+                      />
+                    ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Fallback: non-profession segment without layered data */}
+        {!isProfessionSegment && !layered && report?.recommendations && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+            {report.recommendations.map((item, i) => (
+              <ProfessionCard
+                key={i}
+                item={item}
+                rank={item.rank || i + 1}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Langkah Selanjutnya — navy CTA banner */}
+      <section className="bg-primary-container rounded-lg p-8 md:p-10 text-center shadow-navy-lg relative overflow-hidden">
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(0,245,212,0.15),transparent_55%)]"
+        />
+        <div className="relative z-10 space-y-4">
+          <h2 className="text-headline-md text-white font-bold">Langkah Selanjutnya</h2>
+          <p className="text-primary-fixed text-sm max-w-xl mx-auto">
+            Siapkan dirimu untuk mencapai tujuan dengan roadmap khusus yang telah kami buat,
+            atau gali lebih dalam lewat AI Expert.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center pt-2">
+            <Link
+              href="/roadmap"
+              className="inline-flex items-center gap-2 bg-tertiary-fixed-dim text-on-tertiary-fixed font-semibold px-6 py-3 rounded-full hover:bg-tertiary-fixed transition text-sm"
+            >
+              Lihat Roadmap Penuh <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/chat"
+              className="inline-flex items-center gap-2 border border-white/30 text-white font-semibold px-6 py-3 rounded-full hover:bg-white/10 transition text-sm"
+            >
+              <MessageSquare className="w-4 h-4" /> Chat dengan AI Expert
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

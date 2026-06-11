@@ -107,48 +107,60 @@ export default function RoadmapPage() {
     .reduce((sum, t) => sum + t.points_reward, 0) ?? 0;
 
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-8">
+    <div className="p-4 md:p-10 max-w-4xl mx-auto space-y-10">
       {/* Header */}
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold text-slate-900">Roadmap Hidupmu 🗺️</h1>
-        <div className="flex items-center justify-between text-sm text-slate-500">
+      <header className="space-y-3">
+        <h1 className="text-display-lg-mobile md:text-display-lg text-primary">
+          Roadmap Masa Depanmu
+        </h1>
+        <p className="text-body-lg text-on-surface-variant">
+          Langkah demi langkah, kita bangun jalur karir yang paling sesuai dengan potensi unikmu.
+        </p>
+        <div className="flex items-center justify-between font-label text-label-sm text-on-surface-variant">
           <span>{totalCompleted} dari {totalTasks} task selesai</span>
-          <span className="font-medium text-amber-600">✨ {pointsFromRoadmap} poin dari roadmap</span>
+          <span className="font-bold text-on-tertiary-container">✨ {pointsFromRoadmap} poin dari roadmap</span>
         </div>
-        <ProgressBar value={overallPct} color="bg-blue-500" height="h-2" />
-      </div>
+        <ProgressBar value={overallPct} color="bg-tertiary-fixed-dim" height="h-2" />
+      </header>
 
-      {/* Layers */}
+      {/* Phases on the pathway */}
       {!roadmap ? (
-        <div className="text-center py-12 text-slate-500">
+        <div className="text-center py-12 text-on-surface-variant">
           Roadmap belum tersedia. Selesaikan onboarding terlebih dahulu.
         </div>
       ) : (
-        <div className="space-y-8">
-          {roadmap.layers.map((layer) => (
-            <LayerSection
-              key={layer.layer}
-              layer={layer}
-              onCompleteTask={handleCompleteTask}
-              completingId={completingId}
-            />
-          ))}
+        <div className="relative">
+          {/* Continuous pathway line */}
+          <div
+            aria-hidden
+            className="absolute left-4 top-2 bottom-2 w-0.5 bg-gradient-to-b from-tertiary-fixed-dim via-secondary/40 to-outline-variant"
+          />
+          <div className="space-y-12 relative">
+            {roadmap.layers.map((layer) => (
+              <LayerSection
+                key={layer.layer}
+                layer={layer}
+                onCompleteTask={handleCompleteTask}
+                completingId={completingId}
+              />
+            ))}
+          </div>
         </div>
       )}
 
       {/* Milestone */}
-      <div className="bg-gradient-to-br from-amber-50 to-yellow-100 border border-amber-200 rounded-2xl p-6 space-y-4">
+      <div className="glass-card accent-strip-teal rounded-lg p-6 space-y-4 shadow-navy-sm">
         <div>
-          <h3 className="text-lg font-bold text-slate-900">🏆 Update Milestone Nyatamu</h3>
-          <p className="text-sm text-slate-600 mt-1">
+          <h2 className="text-headline-md text-primary">🏆 Update Milestone Nyatamu</h2>
+          <p className="text-sm text-on-surface-variant mt-1">
             Sudah ambil langkah nyata di dunia luar? Catat di sini
-            <span className="font-semibold text-amber-700"> +150 poin</span>
+            <span className="font-semibold text-on-tertiary-container"> +150 poin</span>
           </p>
         </div>
         {!showMilestone ? (
           <button
             onClick={() => setShowMilestone(true)}
-            className="bg-amber-500 hover:bg-amber-400 text-white rounded-xl px-5 py-2.5 font-medium transition text-sm"
+            className="bg-secondary hover:bg-secondary-container text-on-secondary rounded-md px-5 py-2.5 text-sm font-semibold transition"
           >
             Catat Milestone →
           </button>
@@ -157,7 +169,7 @@ export default function RoadmapPage() {
             <select
               value={milestoneType}
               onChange={(e) => setMilestoneType(e.target.value)}
-              className="w-full border border-amber-200 rounded-xl px-4 py-2.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm"
+              className="input-tuju text-sm"
             >
               <option value="">Pilih jenis milestone...</option>
               {MILESTONE_TYPES.map((m) => (
@@ -169,19 +181,19 @@ export default function RoadmapPage() {
               onChange={(e) => setMilestoneDesc(e.target.value)}
               placeholder="Ceritakan pencapaianmu..."
               rows={3}
-              className="w-full border border-amber-200 rounded-xl px-4 py-2.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400 text-sm resize-none"
+              className="input-tuju text-sm resize-none"
             />
             <div className="flex gap-2">
               <button
                 onClick={handleSaveMilestone}
                 disabled={!milestoneType || !milestoneDesc.trim() || savingMilestone}
-                className="flex-1 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-white rounded-xl py-2.5 font-semibold transition text-sm"
+                className="flex-1 bg-secondary hover:bg-secondary-container disabled:opacity-50 text-on-secondary rounded-md py-2.5 font-semibold transition text-sm"
               >
                 {savingMilestone ? "Menyimpan..." : "Simpan Milestone +150 poin"}
               </button>
               <button
                 onClick={() => { setShowMilestone(false); setMilestoneType(""); setMilestoneDesc(""); }}
-                className="border border-amber-200 text-slate-600 hover:bg-white rounded-xl px-4 py-2.5 text-sm transition"
+                className="border border-outline-variant text-on-surface-variant hover:bg-surface-container-low rounded-md px-4 py-2.5 text-sm transition"
               >
                 Batal
               </button>

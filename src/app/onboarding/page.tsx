@@ -1,29 +1,41 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  Compass,
+  GraduationCap,
+  BookOpen,
+  Award,
+  Briefcase,
+  Split,
+  Users,
+  ArrowRight,
+  ArrowLeft,
+  Check,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { authApi, reportApi, roadmapApi } from "@/lib/api";
 import { Segment } from "@/types";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { ProgressBar } from "@/components/ui/ProgressBar";
 
-const SEGMENTS = [
-  { value: "smp", icon: "🎓", label: "Pelajar SMP", desc: "Kelas 7-9" },
-  { value: "sma", icon: "📚", label: "Pelajar SMA/SMK", desc: "Kelas 10-12" },
-  { value: "mahasiswa", icon: "🎓", label: "Mahasiswa", desc: "Sedang kuliah" },
-  { value: "fresh_grad", icon: "💼", label: "Fresh Graduate", desc: "Baru lulus / mencari kerja" },
-  { value: "career_switcher", icon: "🔄", label: "Sudah Bekerja", desc: "Ingin ganti jalur" },
-  { value: "orang_tua", icon: "👨‍👩‍👧", label: "Orang Tua", desc: "Mendampingi anak" },
+const SEGMENTS: { value: string; icon: LucideIcon; strip: string; label: string; desc: string }[] = [
+  { value: "smp",             icon: GraduationCap, strip: "accent-strip-teal",   label: "Pelajar SMP",      desc: "Kelas 7-9" },
+  { value: "sma",             icon: BookOpen,      strip: "accent-strip-blue",   label: "Pelajar SMA/SMK",  desc: "Kelas 10-12" },
+  { value: "mahasiswa",       icon: Award,         strip: "accent-strip-purple", label: "Mahasiswa",        desc: "Sedang kuliah" },
+  { value: "fresh_grad",      icon: Briefcase,     strip: "accent-strip-teal",   label: "Fresh Graduate",   desc: "Baru lulus / mencari kerja" },
+  { value: "career_switcher", icon: Split,         strip: "accent-strip-blue",   label: "Sudah Bekerja",    desc: "Ingin ganti jalur" },
+  { value: "orang_tua",       icon: Users,         strip: "accent-strip-purple", label: "Orang Tua",        desc: "Mendampingi anak" },
 ];
 
 const INTERESTS = [
-  { value: "teknologi", icon: "💻", label: "Teknologi" },
-  { value: "kesehatan", icon: "🏥", label: "Kesehatan" },
-  { value: "bisnis", icon: "💼", label: "Bisnis" },
-  { value: "pendidikan", icon: "📚", label: "Pendidikan" },
-  { value: "sosial", icon: "🤝", label: "Sosial" },
-  { value: "seni", icon: "🎨", label: "Seni" },
-  { value: "olahraga", icon: "⚽", label: "Olahraga" },
-  { value: "sains", icon: "🔬", label: "Sains" },
+  { value: "teknologi",   icon: "💻", label: "Teknologi" },
+  { value: "kesehatan",   icon: "🏥", label: "Kesehatan" },
+  { value: "bisnis",      icon: "💼", label: "Bisnis" },
+  { value: "pendidikan",  icon: "📚", label: "Pendidikan" },
+  { value: "sosial",      icon: "🤝", label: "Sosial" },
+  { value: "seni",        icon: "🎨", label: "Seni" },
+  { value: "olahraga",    icon: "⚽", label: "Olahraga" },
+  { value: "sains",       icon: "🔬", label: "Sains" },
   { value: "kreativitas", icon: "✨", label: "Kreativitas" },
 ];
 
@@ -169,8 +181,8 @@ export default function OnboardingPage() {
 
   if (loading || pollStatus === "polling") {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex items-center justify-center">
-        <div className="text-center text-white space-y-6">
+      <div className="min-h-screen bg-primary flex items-center justify-center px-4">
+        <div className="text-center text-on-primary space-y-6">
           <LoadingSpinner size="lg" />
           <div className="space-y-2">
             {loadingMessages.map((msg, i) => (
@@ -184,7 +196,7 @@ export default function OnboardingPage() {
               </p>
             ))}
           </div>
-          <p className="text-slate-400 text-sm">Ini mungkin butuh 30-60 detik...</p>
+          <p className="text-primary-fixed-dim text-sm">Ini mungkin butuh 30-60 detik...</p>
         </div>
       </div>
     );
@@ -192,18 +204,18 @@ export default function OnboardingPage() {
 
   if (pollStatus === "failed") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-center space-y-4">
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
+        <div className="glass-card rounded-lg shadow-navy p-8 text-center space-y-4 max-w-md w-full">
           <p className="text-2xl">😔</p>
-          <h2 className="text-xl font-bold text-slate-900">Gagal membuat report</h2>
-          <p className="text-slate-500">Coba lagi setelah beberapa saat</p>
+          <h2 className="text-headline-md text-primary">Gagal membuat report</h2>
+          <p className="text-on-surface-variant">Coba lagi setelah beberapa saat</p>
           <button
             onClick={() => {
               setPollStatus("idle");
               setLoading(false);
               setStep(4);
             }}
-            className="bg-blue-600 hover:bg-blue-500 text-white rounded-xl px-6 py-3 font-medium transition"
+            className="bg-secondary hover:bg-secondary-container text-on-secondary rounded-md px-6 py-3 text-button font-semibold transition"
           >
             Coba Lagi
           </button>
@@ -212,81 +224,95 @@ export default function OnboardingPage() {
     );
   }
 
+  const stepLabel =
+    step === 4 ? `Langkah 4 · Pertanyaan ${subStep + 1} dari 5` : `Langkah ${step} dari 4`;
+
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      {/* Header with progress */}
-      <div className="bg-white border-b border-slate-200 px-6 py-4">
-        <div className="max-w-lg mx-auto">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-blue-600">Tuju</span>
-            <span className="text-xs text-slate-500">
-              {step === 4
-                ? `Step 4 · Pertanyaan ${subStep + 1}/5`
-                : `Step ${step} dari 4`}
-            </span>
-          </div>
-          <ProgressBar value={progress} color="bg-blue-600" height="h-1.5" />
+    <div className="min-h-screen bg-background relative flex flex-col">
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(0,245,212,0.06),transparent_50%),radial-gradient(ellipse_at_top_right,rgba(37,82,202,0.06),transparent_55%)]"
+      />
+
+      {/* Progress header */}
+      <div className="relative z-10 w-full max-w-3xl mx-auto px-4 pt-10">
+        <div className="flex items-center justify-between mb-3">
+          <span className="font-label text-label-sm text-on-surface-variant">{stepLabel}</span>
+          <span className="text-headline-md font-bold text-primary text-base">Tuju</span>
+        </div>
+        <div className="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+          <div
+            className="h-full bg-tertiary-fixed-dim rounded-full transition-all duration-500"
+            style={{ width: `${progress}%` }}
+          />
         </div>
       </div>
 
-      <div className="flex-1 flex items-start justify-center px-4 py-10">
-        <div className="w-full max-w-lg">
+      {/* Card */}
+      <div className="relative z-10 flex-1 flex items-start justify-center px-4 py-10">
+        <div className="w-full max-w-3xl bg-surface-container-low/60 border border-outline-variant/30 rounded-lg shadow-navy p-6 md:p-12">
 
           {/* STEP 1 — Segment */}
           {step === 1 && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold text-slate-900 mb-1">
-                  Halo! Aku Tuju 👋
-                </h2>
-                <p className="text-slate-500">Kamu sekarang di fase hidup yang mana?</p>
+            <div className="space-y-8">
+              <div className="text-center">
+                <div className="w-16 h-16 rounded-full bg-primary text-on-primary flex items-center justify-center mx-auto mb-6 shadow-navy">
+                  <Compass className="w-7 h-7" />
+                </div>
+                <h1 className="text-display-lg-mobile md:text-display-lg text-primary mb-4">
+                  Halo! Aku Tuju.
+                </h1>
+                <p className="text-body-lg text-on-surface-variant max-w-xl mx-auto">
+                  Untuk memberikan rekomendasi jalur terbaik, kamu sekarang berada di fase hidup yang mana?
+                </p>
               </div>
-              <div className="grid grid-cols-1 gap-3">
-                {SEGMENTS.map((s) => (
-                  <button
-                    key={s.value}
-                    onClick={() =>
-                      setForm((f) => ({ ...f, segment: s.value as Segment }))
-                    }
-                    className={`flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition ${
-                      form.segment === s.value
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-slate-200 bg-white hover:border-blue-300"
-                    }`}
-                  >
-                    <span className="text-2xl">{s.icon}</span>
-                    <div>
-                      <p className="font-semibold text-slate-900">{s.label}</p>
-                      <p className="text-sm text-slate-500">{s.desc}</p>
-                    </div>
-                    {form.segment === s.value && (
-                      <span className="ml-auto text-blue-600">✓</span>
-                    )}
-                  </button>
-                ))}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {SEGMENTS.map((s) => {
+                  const selected = form.segment === s.value;
+                  return (
+                    <button
+                      key={s.value}
+                      onClick={() =>
+                        setForm((f) => ({ ...f, segment: s.value as Segment }))
+                      }
+                      className={`${s.strip} flex flex-col items-center gap-2 p-6 rounded-md border bg-surface-container-lowest text-center transition shadow-sm hover:shadow-navy ${
+                        selected
+                          ? "border-secondary ring-2 ring-secondary/30"
+                          : "border-outline-variant/40 hover:border-secondary/50"
+                      }`}
+                    >
+                      <s.icon className="w-7 h-7 text-secondary" />
+                      <p className="font-semibold text-primary">{s.label}</p>
+                      <p className="font-label text-label-sm text-on-surface-variant">{s.desc}</p>
+                      {selected && <Check className="w-4 h-4 text-secondary" />}
+                    </button>
+                  );
+                })}
               </div>
-              <button
-                disabled={!form.segment}
-                onClick={() => setStep(2)}
-                className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white rounded-xl py-3 font-semibold transition"
-              >
-                Lanjut →
-              </button>
+              <div className="flex justify-end">
+                <button
+                  disabled={!form.segment}
+                  onClick={() => setStep(2)}
+                  className="inline-flex items-center gap-2 bg-secondary hover:bg-secondary-container disabled:opacity-40 text-on-secondary rounded-md px-8 py-3 text-button font-semibold transition"
+                >
+                  Selanjutnya <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           )}
 
           {/* STEP 2 — Data Dasar */}
           {step === 2 && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold text-slate-900 mb-1">
+            <div className="space-y-8 max-w-lg mx-auto">
+              <div className="text-center">
+                <h1 className="text-headline-md md:text-3xl font-bold text-primary mb-2">
                   Cerita tentang kamu
-                </h2>
-                <p className="text-slate-500">Isi beberapa info dasar dulu</p>
+                </h1>
+                <p className="text-on-surface-variant">Isi beberapa info dasar dulu</p>
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block font-label text-label-sm uppercase text-on-surface-variant mb-2">
                     Kota domisili
                   </label>
                   <input
@@ -296,12 +322,12 @@ export default function OnboardingPage() {
                     onChange={(e) =>
                       setForm((f) => ({ ...f, city: e.target.value }))
                     }
-                    className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900"
+                    className="input-tuju"
                   />
                 </div>
                 {(form.segment === "smp" || form.segment === "sma") && (
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block font-label text-label-sm uppercase text-on-surface-variant mb-2">
                       Kelas
                     </label>
                     <select
@@ -309,7 +335,7 @@ export default function OnboardingPage() {
                       onChange={(e) =>
                         setForm((f) => ({ ...f, grade: e.target.value }))
                       }
-                      className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 bg-white"
+                      className="input-tuju"
                     >
                       <option value="">Pilih kelas</option>
                       {form.segment === "smp" &&
@@ -329,7 +355,7 @@ export default function OnboardingPage() {
                 )}
                 {form.segment === "sma" && (
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block font-label text-label-sm uppercase text-on-surface-variant mb-2">
                       Jurusan saat ini
                     </label>
                     <select
@@ -337,7 +363,7 @@ export default function OnboardingPage() {
                       onChange={(e) =>
                         setForm((f) => ({ ...f, major_current: e.target.value }))
                       }
-                      className="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 bg-white"
+                      className="input-tuju"
                     >
                       <option value="">Pilih jurusan</option>
                       {["IPA", "IPS", "Bahasa", "SMK", "Belum tau"].map((j) => (
@@ -352,15 +378,15 @@ export default function OnboardingPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setStep(1)}
-                  className="flex-1 border border-slate-200 hover:border-blue-300 rounded-xl py-3 font-medium text-slate-700 transition"
+                  className="flex-1 inline-flex items-center justify-center gap-2 border-2 border-primary text-primary rounded-md py-3 text-button font-semibold hover:bg-surface-variant transition"
                 >
-                  ← Kembali
+                  <ArrowLeft className="w-4 h-4" /> Kembali
                 </button>
                 <button
                   onClick={() => setStep(3)}
-                  className="flex-1 bg-blue-600 hover:bg-blue-500 text-white rounded-xl py-3 font-semibold transition"
+                  className="flex-1 inline-flex items-center justify-center gap-2 bg-secondary hover:bg-secondary-container text-on-secondary rounded-md py-3 text-button font-semibold transition"
                 >
-                  Lanjut →
+                  Selanjutnya <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -368,12 +394,12 @@ export default function OnboardingPage() {
 
           {/* STEP 3 — Minat */}
           {step === 3 && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold text-slate-900 mb-1">
+            <div className="space-y-8 max-w-lg mx-auto">
+              <div className="text-center">
+                <h1 className="text-headline-md md:text-3xl font-bold text-primary mb-2">
                   Bidang yang bikin kamu excited?
-                </h2>
-                <p className="text-slate-500">Pilih minimal 1 (maksimal 5)</p>
+                </h1>
+                <p className="text-on-surface-variant">Pilih minimal 1 (maksimal 5)</p>
               </div>
               <div className="grid grid-cols-3 gap-3">
                 {INTERESTS.map((i) => {
@@ -383,14 +409,14 @@ export default function OnboardingPage() {
                       key={i.value}
                       onClick={() => toggleInterest(i.value)}
                       disabled={!selected && form.interest_domains.length >= 5}
-                      className={`flex flex-col items-center gap-2 p-4 rounded-2xl border-2 transition ${
+                      className={`flex flex-col items-center gap-2 p-4 rounded-md border bg-surface-container-lowest transition ${
                         selected
-                          ? "border-blue-500 bg-blue-50"
-                          : "border-slate-200 bg-white hover:border-blue-200 disabled:opacity-40"
+                          ? "border-secondary ring-2 ring-secondary/30"
+                          : "border-outline-variant/40 hover:border-secondary/50 disabled:opacity-40"
                       }`}
                     >
                       <span className="text-2xl">{i.icon}</span>
-                      <span className="text-xs font-medium text-slate-700">
+                      <span className="font-label text-label-sm text-on-surface">
                         {i.label}
                       </span>
                     </button>
@@ -400,9 +426,9 @@ export default function OnboardingPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setStep(2)}
-                  className="flex-1 border border-slate-200 hover:border-blue-300 rounded-xl py-3 font-medium text-slate-700 transition"
+                  className="flex-1 inline-flex items-center justify-center gap-2 border-2 border-primary text-primary rounded-md py-3 text-button font-semibold hover:bg-surface-variant transition"
                 >
-                  ← Kembali
+                  <ArrowLeft className="w-4 h-4" /> Kembali
                 </button>
                 <button
                   disabled={form.interest_domains.length === 0}
@@ -410,9 +436,9 @@ export default function OnboardingPage() {
                     setStep(4);
                     setSubStep(0);
                   }}
-                  className="flex-1 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white rounded-xl py-3 font-semibold transition"
+                  className="flex-1 inline-flex items-center justify-center gap-2 bg-secondary hover:bg-secondary-container disabled:opacity-40 text-on-secondary rounded-md py-3 text-button font-semibold transition"
                 >
-                  Lanjut →
+                  Selanjutnya <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -420,22 +446,22 @@ export default function OnboardingPage() {
 
           {/* STEP 4 — Personality (sub-steps) */}
           {step === 4 && (
-            <div className="space-y-6">
+            <div className="space-y-8 max-w-lg mx-auto">
               <div>
-                <div className="flex gap-1.5 mb-4">
+                <div className="flex gap-1.5 mb-6">
                   {[0, 1, 2, 3, 4].map((i) => (
                     <div
                       key={i}
                       className={`h-1.5 flex-1 rounded-full ${
-                        i <= subStep ? "bg-blue-600" : "bg-slate-200"
+                        i <= subStep ? "bg-tertiary-fixed-dim" : "bg-surface-container-highest"
                       }`}
                     />
                   ))}
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900 mb-1">
+                <h1 className="text-headline-md md:text-3xl font-bold text-primary mb-2 text-center">
                   {PERSONALITY_QUESTIONS[subStep].question}
-                </h2>
-                <p className="text-sm text-slate-500">
+                </h1>
+                <p className="font-label text-label-sm text-on-surface-variant text-center">
                   Pertanyaan {subStep + 1} dari 5
                 </p>
               </div>
@@ -444,21 +470,22 @@ export default function OnboardingPage() {
                   <button
                     key={opt.value}
                     onClick={() => answerPersonality(subStep, opt.value)}
-                    className="w-full flex items-center gap-4 p-5 rounded-2xl border-2 border-slate-200 bg-white hover:border-blue-500 hover:bg-blue-50 text-left transition"
+                    className="w-full flex items-center gap-4 p-5 rounded-md border border-outline-variant/40 bg-surface-container-lowest hover:border-secondary hover:ring-2 hover:ring-secondary/20 text-left transition shadow-sm"
                   >
                     <div>
-                      <p className="font-semibold text-slate-900">{opt.label}</p>
-                      <p className="text-sm text-slate-500">{opt.desc}</p>
+                      <p className="font-semibold text-primary">{opt.label}</p>
+                      <p className="text-sm text-on-surface-variant">{opt.desc}</p>
                     </div>
+                    <ArrowRight className="w-4 h-4 text-secondary ml-auto shrink-0" />
                   </button>
                 ))}
               </div>
               {subStep > 0 && (
                 <button
                   onClick={() => setSubStep((s) => s - 1)}
-                  className="text-sm text-slate-500 hover:text-slate-700"
+                  className="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition"
                 >
-                  ← Pertanyaan sebelumnya
+                  <ArrowLeft className="w-4 h-4" /> Pertanyaan sebelumnya
                 </button>
               )}
             </div>
