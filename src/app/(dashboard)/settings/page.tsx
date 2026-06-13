@@ -19,30 +19,41 @@ const SEGMENT_LABELS: Record<string, string> = {
   orang_tua:       "Orang Tua",
 };
 
+const INPUT_CLASS =
+  "w-full bg-surface-container-low border border-outline-variant/50 rounded-md px-4 py-2.5 text-sm text-on-surface placeholder:text-outline/60 shadow-navy-sm focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all";
+
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
   return (
     <button
       onClick={() => onChange(!checked)}
       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer items-center rounded-full transition-colors focus:outline-none ${
-        checked ? "bg-blue-600" : "bg-slate-200"
+        checked ? "bg-secondary" : "bg-outline-variant"
       }`}
     >
       <span
-        className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200 ${
-          checked ? "translate-x-6" : "translate-x-1"
+        className={`inline-block h-5 w-5 transform rounded-full bg-white border border-outline/20 shadow-sm transition-transform duration-200 ${
+          checked ? "translate-x-[22px]" : "translate-x-[2px]"
         }`}
       />
     </button>
   );
 }
 
-function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
+function SectionCard({
+  title,
+  accent,
+  titleClass = "text-primary",
+  children,
+}: {
+  title: string;
+  accent?: string;
+  titleClass?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-slate-100">
-        <h2 className="font-bold text-slate-900">{title}</h2>
-      </div>
-      <div className="p-6">{children}</div>
+    <div className={`glass-card rounded-lg shadow-navy-sm border border-outline-variant/30 p-6 md:p-8 ${accent ?? ""}`}>
+      <h2 className={`text-headline-md mb-6 ${titleClass}`}>{title}</h2>
+      {children}
     </div>
   );
 }
@@ -159,221 +170,243 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="p-4 md:p-6 max-w-2xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Pengaturan ⚙️</h1>
-        <p className="text-slate-500 mt-1 text-sm">Kelola akun dan preferensimu</p>
+    <div className="p-4 md:p-10 max-w-container mx-auto">
+      {/* Header */}
+      <div className="mb-12">
+        <h1 className="text-display-lg-mobile md:text-display-lg text-primary mb-2">
+          Pengaturan Akun
+        </h1>
+        <p className="text-body-lg text-on-surface-variant">
+          Kelola informasi pribadi, keamanan, dan preferensimu.
+        </p>
       </div>
 
-      {/* Section 1 — Profil Akun */}
-      <SectionCard title="👤 Profil Akun">
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Nama Lengkap</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
-            <input
-              type="email"
-              value={data?.profile.email ?? ""}
-              disabled
-              className="w-full border border-slate-100 rounded-xl px-3 py-2.5 text-sm bg-slate-50 text-slate-400 cursor-not-allowed"
-            />
-            <p className="text-xs text-slate-400 mt-1">Email tidak dapat diubah</p>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Kota</label>
-            <input
-              type="text"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              placeholder="Contoh: Jakarta"
-              className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Tanggal Lahir</label>
-            <input
-              type="date"
-              value={birthDate}
-              onChange={(e) => setBirthDate(e.target.value)}
-              className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Segmen</label>
-            <select
-              value={segment}
-              onChange={(e) => setSegment(e.target.value)}
-              className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition bg-white"
-            >
-              {Object.entries(SEGMENT_LABELS).map(([val, label]) => (
-                <option key={val} value={val}>{label}</option>
-              ))}
-            </select>
-          </div>
-          <button
-            onClick={handleSaveProfile}
-            disabled={savingProfile}
-            className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-300 text-white font-semibold py-2.5 rounded-xl text-sm transition"
-          >
-            {savingProfile ? "Menyimpan..." : "Simpan Perubahan"}
-          </button>
-        </div>
-      </SectionCard>
-
-      {/* Section 2 — Keamanan */}
-      <SectionCard title="🔒 Keamanan">
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Password Saat Ini</label>
-            <input
-              type="password"
-              value={currentPw}
-              onChange={(e) => setCurrentPw(e.target.value)}
-              className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Password Baru</label>
-            <input
-              type="password"
-              value={newPw}
-              onChange={(e) => setNewPw(e.target.value)}
-              placeholder="Min. 8 karakter"
-              className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 transition"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Konfirmasi Password Baru</label>
-            <input
-              type="password"
-              value={confirmPw}
-              onChange={(e) => setConfirmPw(e.target.value)}
-              className={`w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 transition ${
-                confirmPw && newPw !== confirmPw
-                  ? "border-red-300 focus:ring-red-200 focus:border-red-400"
-                  : "border-slate-200 focus:ring-blue-200 focus:border-blue-400"
-              }`}
-            />
-            {confirmPw && newPw !== confirmPw && (
-              <p className="text-xs text-red-500 mt-1">Password tidak cocok</p>
-            )}
-          </div>
-          <button
-            onClick={handleChangePassword}
-            disabled={savingPw || !currentPw || !newPw || !confirmPw}
-            className="w-full bg-slate-800 hover:bg-slate-700 disabled:bg-slate-300 text-white font-semibold py-2.5 rounded-xl text-sm transition"
-          >
-            {savingPw ? "Mengubah..." : "Ganti Password"}
-          </button>
-        </div>
-      </SectionCard>
-
-      {/* Section 3 — Notifikasi */}
-      {data && (
-        <SectionCard title="🔔 Notifikasi">
-          <div className="space-y-4">
-            {[
-              { key: "email_report_ready" as const, icon: "📧", label: "Report siap dikirim via email" },
-              { key: "email_streak_reminder" as const, icon: "🔥", label: "Pengingat streak harian" },
-              { key: "email_weekly_digest" as const, icon: "📰", label: "Ringkasan mingguan via email" },
-            ].map(({ key, icon, label }) => (
-              <div key={key} className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <span className="text-lg">{icon}</span>
-                  <span className="text-sm text-slate-700">{label}</span>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* ── Left column — Profil & Keamanan ──────────────────────── */}
+        <div className="lg:col-span-2 space-y-6">
+          <SectionCard title="Profil Akun" accent="accent-strip-teal">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-label text-label-sm text-on-surface-variant mb-1.5">Nama Lengkap</label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className={INPUT_CLASS}
+                  />
                 </div>
-                <Toggle
-                  checked={data.notifications[key]}
-                  onChange={(v) => handleToggleNotif(key, v)}
+                <div>
+                  <label className="block font-label text-label-sm text-on-surface-variant mb-1.5">Email</label>
+                  <input
+                    type="email"
+                    value={data?.profile.email ?? ""}
+                    disabled
+                    className="w-full bg-surface-container border border-outline-variant/30 rounded-md px-4 py-2.5 text-sm text-outline cursor-not-allowed"
+                  />
+                  <p className="font-label text-label-sm text-outline mt-1">Email tidak dapat diubah</p>
+                </div>
+                <div>
+                  <label className="block font-label text-label-sm text-on-surface-variant mb-1.5">Kota</label>
+                  <input
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="Contoh: Jakarta"
+                    className={INPUT_CLASS}
+                  />
+                </div>
+                <div>
+                  <label className="block font-label text-label-sm text-on-surface-variant mb-1.5">Tanggal Lahir</label>
+                  <input
+                    type="date"
+                    value={birthDate}
+                    onChange={(e) => setBirthDate(e.target.value)}
+                    className={INPUT_CLASS}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block font-label text-label-sm text-on-surface-variant mb-1.5">Segmen</label>
+                <select
+                  value={segment}
+                  onChange={(e) => setSegment(e.target.value)}
+                  className={INPUT_CLASS}
+                >
+                  {Object.entries(SEGMENT_LABELS).map(([val, label]) => (
+                    <option key={val} value={val}>{label}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex justify-end pt-2">
+                <button
+                  onClick={handleSaveProfile}
+                  disabled={savingProfile}
+                  className="bg-secondary hover:bg-primary disabled:opacity-50 text-on-secondary text-button px-6 py-2.5 rounded-md transition-colors shadow-navy-sm"
+                >
+                  {savingProfile ? "Menyimpan..." : "Simpan Perubahan"}
+                </button>
+              </div>
+            </div>
+          </SectionCard>
+
+          <SectionCard title="Keamanan">
+            <div className="space-y-4">
+              <div>
+                <label className="block font-label text-label-sm text-on-surface-variant mb-1.5">Password Saat Ini</label>
+                <input
+                  type="password"
+                  value={currentPw}
+                  onChange={(e) => setCurrentPw(e.target.value)}
+                  className={INPUT_CLASS}
                 />
               </div>
-            ))}
-          </div>
-        </SectionCard>
-      )}
-
-      {/* Section 4 — Data & Privasi */}
-      <SectionCard title="🛡️ Data & Privasi">
-        <p className="text-sm text-slate-500 mb-4">
-          Semua data profilmu disimpan dengan aman dan tidak dibagikan ke pihak ketiga.
-        </p>
-        {data && (
-          <div className="text-xs text-slate-400 space-y-1 mb-4">
-            <p>Akun dibuat: {new Date(data.account.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</p>
-            <p>Email terverifikasi: {data.account.email_verified ? "✅ Ya" : "❌ Belum"}</p>
-            <p>Total sesi chat: {data.account.total_sessions}</p>
-          </div>
-        )}
-        <button
-          disabled
-          title="Tersedia di V1.1"
-          className="w-full border border-slate-200 text-slate-400 py-2.5 rounded-xl text-sm cursor-not-allowed"
-        >
-          📥 Unduh Data Saya (Segera Hadir)
-        </button>
-      </SectionCard>
-
-      {/* Section 5 — Danger Zone */}
-      <div className="bg-white rounded-2xl border border-red-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-red-100 bg-red-50">
-          <h2 className="font-bold text-red-700">⚠️ Hapus Akun</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-label text-label-sm text-on-surface-variant mb-1.5">Password Baru</label>
+                  <input
+                    type="password"
+                    value={newPw}
+                    onChange={(e) => setNewPw(e.target.value)}
+                    placeholder="Min. 8 karakter"
+                    className={INPUT_CLASS}
+                  />
+                </div>
+                <div>
+                  <label className="block font-label text-label-sm text-on-surface-variant mb-1.5">Konfirmasi Password Baru</label>
+                  <input
+                    type="password"
+                    value={confirmPw}
+                    onChange={(e) => setConfirmPw(e.target.value)}
+                    className={
+                      confirmPw && newPw !== confirmPw
+                        ? "w-full bg-surface-container-low border border-error rounded-md px-4 py-2.5 text-sm text-on-surface shadow-navy-sm focus:outline-none focus:ring-2 focus:ring-error/30 transition-all"
+                        : INPUT_CLASS
+                    }
+                  />
+                  {confirmPw && newPw !== confirmPw && (
+                    <p className="text-xs text-error mt-1">Password tidak cocok</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex justify-end pt-2">
+                <button
+                  onClick={handleChangePassword}
+                  disabled={savingPw || !currentPw || !newPw || !confirmPw}
+                  className="border-2 border-secondary text-secondary text-button px-6 py-2 rounded-md hover:bg-secondary/10 disabled:opacity-40 transition-colors"
+                >
+                  {savingPw ? "Mengubah..." : "Ganti Password"}
+                </button>
+              </div>
+            </div>
+          </SectionCard>
         </div>
-        <div className="p-6">
-          <p className="text-sm text-slate-600 mb-4">
-            Aksi ini akan menonaktifkan akunmu secara permanen. Data tidak akan langsung dihapus.
-          </p>
-          <button
-            onClick={() => setShowDeleteModal(true)}
-            className="px-4 py-2.5 border border-red-300 text-red-600 hover:bg-red-50 rounded-xl text-sm font-medium transition"
-          >
-            Hapus Akun
-          </button>
+
+        {/* ── Right column — Preferensi ────────────────────────────── */}
+        <div className="space-y-6">
+          {data && (
+            <SectionCard title="Notifikasi">
+              <div className="space-y-4">
+                {[
+                  { key: "email_report_ready" as const, label: "Report Siap", desc: "Kirim report via email" },
+                  { key: "email_streak_reminder" as const, label: "Pengingat Streak", desc: "Pengingat harian" },
+                  { key: "email_weekly_digest" as const, label: "Ringkasan Mingguan", desc: "Insight AI tiap minggu" },
+                ].map(({ key, label, desc }, i, arr) => (
+                  <div key={key}>
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <h4 className="text-on-surface font-semibold text-sm">{label}</h4>
+                        <p className="font-label text-label-sm text-on-surface-variant">{desc}</p>
+                      </div>
+                      <Toggle
+                        checked={data.notifications[key]}
+                        onChange={(v) => handleToggleNotif(key, v)}
+                      />
+                    </div>
+                    {i < arr.length - 1 && <hr className="border-outline-variant/30 mt-4" />}
+                  </div>
+                ))}
+              </div>
+            </SectionCard>
+          )}
+
+          <SectionCard title="Data & Privasi">
+            <p className="text-sm text-on-surface-variant mb-4">
+              Semua data profilmu disimpan dengan aman dan tidak dibagikan ke pihak ketiga.
+            </p>
+            {data && (
+              <div className="font-label text-label-sm text-on-surface-variant space-y-1.5 mb-4 bg-surface-container-low rounded-md p-3 border border-outline-variant/20">
+                <p>
+                  Akun dibuat:{" "}
+                  {new Date(data.account.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
+                </p>
+                <p>Email terverifikasi: {data.account.email_verified ? "✅ Ya" : "❌ Belum"}</p>
+                <p>Total sesi chat: {data.account.total_sessions}</p>
+              </div>
+            )}
+            <button
+              disabled
+              title="Tersedia di V1.1"
+              className="w-full border border-outline-variant/50 text-outline py-2.5 rounded-md text-sm cursor-not-allowed"
+            >
+              Unduh Data Saya (Segera Hadir)
+            </button>
+          </SectionCard>
+
+          <SectionCard title="Danger Zone" titleClass="text-error">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h4 className="text-on-surface font-semibold text-sm">Hapus Akun</h4>
+                <p className="font-label text-label-sm text-on-surface-variant">
+                  Menonaktifkan akunmu secara permanen.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="bg-error-container text-on-error-container hover:bg-error hover:text-on-error px-4 py-2 rounded-md text-button text-sm transition-colors shadow-navy-sm flex-shrink-0"
+              >
+                Hapus Akun
+              </button>
+            </div>
+          </SectionCard>
         </div>
       </div>
 
       {/* Delete Account Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl space-y-4">
-            <h3 className="font-bold text-slate-900 text-lg">Konfirmasi Hapus Akun</h3>
-            <p className="text-sm text-slate-500">
-              Ketik <span className="font-bold text-red-600">HAPUS AKUN SAYA</span> untuk mengonfirmasi.
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/40 backdrop-blur-sm p-4">
+          <div className="glass-card rounded-xl p-6 max-w-md w-full shadow-navy-lg space-y-4">
+            <h3 className="text-headline-md text-primary text-lg">Konfirmasi Hapus Akun</h3>
+            <p className="text-sm text-on-surface-variant">
+              Ketik <span className="font-bold text-error">HAPUS AKUN SAYA</span> untuk mengonfirmasi.
             </p>
             <input
               type="text"
               value={deleteConfirmText}
               onChange={(e) => setDeleteConfirmText(e.target.value)}
               placeholder="HAPUS AKUN SAYA"
-              className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-400 transition"
+              className="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-error/30 focus:border-error transition-all"
             />
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
+              <label className="block font-label text-label-sm text-on-surface-variant mb-1.5">Password</label>
               <input
                 type="password"
                 value={deletePassword}
                 onChange={(e) => setDeletePassword(e.target.value)}
-                className="w-full border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-200 focus:border-red-400 transition"
+                className="w-full bg-surface-container-lowest border border-outline-variant rounded-md px-4 py-2.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-error/30 focus:border-error transition-all"
               />
             </div>
             <div className="flex gap-3 pt-2">
               <button
                 onClick={() => { setShowDeleteModal(false); setDeleteConfirmText(""); setDeletePassword(""); }}
-                className="flex-1 border border-slate-200 text-slate-600 hover:bg-slate-50 py-2.5 rounded-xl text-sm font-medium transition"
+                className="flex-1 border border-outline-variant text-on-surface-variant hover:bg-surface-container-low py-2.5 rounded-md text-sm font-medium transition"
               >
                 Batal
               </button>
               <button
                 onClick={handleDeleteAccount}
                 disabled={deletingAccount || deleteConfirmText !== "HAPUS AKUN SAYA" || !deletePassword}
-                className="flex-1 bg-red-600 hover:bg-red-500 disabled:bg-red-300 text-white py-2.5 rounded-xl text-sm font-semibold transition"
+                className="flex-1 bg-error hover:bg-on-error-container disabled:opacity-50 text-on-error py-2.5 rounded-md text-sm font-semibold transition"
               >
                 {deletingAccount ? "Menghapus..." : "Konfirmasi Hapus"}
               </button>

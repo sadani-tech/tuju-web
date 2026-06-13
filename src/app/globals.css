@@ -2,6 +2,68 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  /* Level 1 elevation — glassmorphism card (light) */
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-xl border border-white/30;
+  }
+  /* Level 1 elevation — glassmorphism card (navy) */
+  .glass-card-navy {
+    @apply bg-primary/80 backdrop-blur-xl border border-white/10 text-on-primary;
+  }
+  /* Navy → royal blue brand gradient text */
+  .text-gradient {
+    background: linear-gradient(90deg, #00113a 0%, #2552ca 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  /* 4px vertical accent strip on the left edge of cards */
+  .accent-strip-teal {
+    @apply relative overflow-hidden;
+  }
+  .accent-strip-teal::before {
+    content: "";
+    @apply absolute left-0 top-0 bottom-0 w-1 bg-tertiary-fixed-dim;
+  }
+  .accent-strip-purple {
+    @apply relative overflow-hidden;
+  }
+  .accent-strip-purple::before {
+    content: "";
+    @apply absolute left-0 top-0 bottom-0 w-1 bg-accent-purple;
+  }
+  .accent-strip-blue {
+    @apply relative overflow-hidden;
+  }
+  .accent-strip-blue::before {
+    content: "";
+    @apply absolute left-0 top-0 bottom-0 w-1 bg-secondary;
+  }
+  /* Lift-on-hover card (explore/professions mockup) */
+  .hover-lift {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-6px);
+    box-shadow: 0px 16px 40px rgba(0, 35, 102, 0.1);
+    border-color: #dce1ff;
+  }
+  /* Teal ring glow for top-match / recommended cards */
+  .top-match-glow {
+    box-shadow: 0 0 0 2px #00dfc1, 0 8px 30px rgba(0, 223, 193, 0.2);
+    border-color: transparent;
+  }
+  .top-match-glow:hover {
+    box-shadow: 0 0 0 2px #00dfc1, 0 16px 40px rgba(0, 223, 193, 0.3);
+    border-color: transparent;
+  }
+  /* Focused input — 2px royal border with soft teal outer glow */
+  .input-tuju {
+    @apply w-full rounded-md border border-outline-variant bg-surface-container-lowest px-4 py-3 text-on-surface placeholder:text-outline transition focus:border-secondary focus:outline-none focus:ring-2 focus:ring-secondary focus:shadow-glow-teal;
+  }
+}
+
 @keyframes confetti-float {
   0%   { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
   100% { transform: translateY(-120px) rotate(540deg) scale(0.5); opacity: 0; }

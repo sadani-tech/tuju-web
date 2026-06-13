@@ -1,3 +1,4 @@
+import { Lock, Check } from "lucide-react";
 import type { RoadmapTask } from "@/types";
 import { PillBadge } from "@/components/ui/PillBadge";
 
@@ -22,32 +23,31 @@ export function TaskCard({ task, onComplete, completing }: TaskCardProps) {
 
   return (
     <div
-      className={`bg-white border rounded-xl p-4 transition ${
+      className={`glass-card rounded-md p-4 transition ${
         isCompleted
-          ? "border-blue-200 opacity-60"
+          ? "opacity-70"
           : isLocked
-          ? "border-slate-100 opacity-40 cursor-not-allowed"
-          : "border-slate-200 hover:border-blue-300 hover:shadow-sm"
+          ? "opacity-40 cursor-not-allowed"
+          : "shadow-navy-sm hover:shadow-navy"
       }`}
     >
       <div className="flex items-start gap-3">
         <button
           onClick={() => !isCompleted && !isLocked && onComplete(task.id)}
           disabled={isCompleted || isLocked || completing}
-          className={`mt-0.5 w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition ${
+          className={`mt-0.5 w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition ${
             isCompleted
-              ? "bg-blue-500 border-blue-500"
+              ? "bg-tertiary-fixed-dim border-tertiary-fixed-dim"
               : completing
-              ? "border-blue-300 bg-blue-50 cursor-wait"
+              ? "border-secondary/50 bg-primary-fixed/40 cursor-wait"
               : isLocked
-              ? "border-slate-200 cursor-not-allowed"
-              : "border-slate-300 hover:border-blue-400"
+              ? "border-outline-variant cursor-not-allowed"
+              : "border-outline hover:border-secondary"
           }`}
         >
+          {isLocked && <Lock className="w-2.5 h-2.5 text-outline" />}
           {(isCompleted || completing) && (
-            <span className={`text-xs leading-none ${isCompleted ? "text-white" : "text-blue-400"}`}>
-              ✓
-            </span>
+            <Check className={`w-3 h-3 ${isCompleted ? "text-on-tertiary-fixed" : "text-secondary"}`} />
           )}
         </button>
 
@@ -55,17 +55,23 @@ export function TaskCard({ task, onComplete, completing }: TaskCardProps) {
           <div className="flex items-start justify-between gap-2">
             <p
               className={`text-sm font-medium leading-snug ${
-                isCompleted ? "line-through text-slate-400" : "text-slate-800"
+                isCompleted ? "line-through text-outline" : "text-on-surface"
               }`}
             >
               {task.title}
             </p>
-            <span className="text-xs font-semibold text-amber-600 flex-shrink-0 mt-0.5">
-              +{task.points_reward} pts
+            <span
+              className={`font-label text-label-sm font-bold px-2 py-0.5 rounded-full flex-shrink-0 whitespace-nowrap ${
+                isCompleted
+                  ? "bg-tertiary-fixed-dim/20 text-on-tertiary-fixed-variant"
+                  : "bg-primary-fixed text-on-primary-fixed-variant"
+              }`}
+            >
+              {isCompleted ? "Selesai " : ""}+{task.points_reward} XP
             </span>
           </div>
           {task.description && (
-            <p className={`text-xs mt-1 ${isCompleted ? "text-slate-400" : "text-slate-500"}`}>
+            <p className={`text-xs mt-1 ${isCompleted ? "text-outline" : "text-on-surface-variant"}`}>
               {task.description}
             </p>
           )}

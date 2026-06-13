@@ -32,9 +32,9 @@ export function ToastContainer() {
   }, []);
 
   const colors = {
-    success: "bg-green-500",
-    error: "bg-red-500",
-    info: "bg-blue-500",
+    success: "bg-tertiary-container",
+    error: "bg-error",
+    info: "bg-secondary",
   };
 
   return (
@@ -42,7 +42,7 @@ export function ToastContainer() {
       {toasts.map((t) => (
         <div
           key={t.id}
-          className={`${colors[t.type]} text-white px-4 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 animate-fade-in max-w-xs`}
+          className={`${colors[t.type]} text-white px-4 py-3 rounded-md shadow-navy text-sm font-medium flex items-center gap-2 animate-fade-in max-w-xs`}
         >
           {t.type === "success" && "✅"}
           {t.type === "error" && "❌"}
