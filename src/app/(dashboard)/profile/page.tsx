@@ -117,6 +117,9 @@ export default function ProfilePage() {
     achievements: [] as string[],
   });
 
+  // Per-subject grades, edited as rows then saved as {subject: score}.
+  const [subjectScores, setSubjectScores] = useState<{ subject: string; score: string }[]>([]);
+
   const [personality, setPersonality] = useState<PersonalityState>({
     riasec_r: 50,
     riasec_i: 50,
@@ -150,6 +153,7 @@ export default function ProfilePage() {
   const [goals, setGoals] = useState({
     financial_condition: "",
     education_target: "",
+    education_years_willing: "",
     career_target_5y: "",
     current_obstacles: "",
   });
@@ -173,6 +177,15 @@ export default function ProfilePage() {
           favorite_subjects: data.academic.favorite_subjects || [],
           achievements: data.academic.achievements || [],
         });
+        const ss = data.academic.subject_scores;
+        if (ss && typeof ss === "object") {
+          setSubjectScores(
+            Object.entries(ss).map(([subject, score]) => ({
+              subject,
+              score: String(score),
+            }))
+          );
+        }
       }
       if (data.personality) {
         setPersonality({
@@ -212,6 +225,7 @@ export default function ProfilePage() {
         setGoals({
           financial_condition: data.goals.financial_condition || "",
           education_target: data.goals.education_target || "",
+          education_years_willing: data.goals.education_years_willing?.toString() || "",
           career_target_5y: data.goals.career_target_5y || "",
           current_obstacles: data.goals.current_obstacles || "",
         });
@@ -238,9 +252,16 @@ export default function ProfilePage() {
   const saveAcademic = async () => {
     setSaving(true);
     try {
+      const subject_scores: Record<string, number> = {};
+      for (const row of subjectScores) {
+        const name = row.subject.trim().toLowerCase();
+        const val = parseFloat(row.score);
+        if (name && !Number.isNaN(val)) subject_scores[name] = val;
+      }
       await profileApi.updateAcademic({
         ...academic,
         avg_score: academic.avg_score ? parseFloat(academic.avg_score) : null,
+        subject_scores,
       });
       toast("Akademik tersimpan! +10 poin", "success");
       const compRes = await profileApi.getCompleteness();
@@ -289,7 +310,12 @@ export default function ProfilePage() {
   const saveGoals = async () => {
     setSaving(true);
     try {
-      await profileApi.updateGoals(goals);
+      await profileApi.updateGoals({
+        ...goals,
+        education_years_willing: goals.education_years_willing
+          ? parseInt(goals.education_years_willing, 10)
+          : null,
+      });
       toast("Goals tersimpan! +10 poin", "success");
       const compRes = await profileApi.getCompleteness();
       setCompleteness(compRes.data);
@@ -455,6 +481,59 @@ export default function ProfilePage() {
                   }
                   placeholder="Matematika, Biologi... (Enter untuk tambah)"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
+                  Nilai per Mata Pelajaran
+                </label>
+                <p className="text-xs text-on-surface-variant mb-2">
+                  Nilai per mapel membuat rekomendasi lebih akurat (mis. syarat Biologi & Kimia untuk Kedokteran).
+                </p>
+                <div className="space-y-2">
+                  {subjectScores.map((row, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={row.subject}
+                        onChange={(e) =>
+                          setSubjectScores((rows) =>
+                            rows.map((r, i) => (i === idx ? { ...r, subject: e.target.value } : r))
+                          )
+                        }
+                        placeholder="Mata pelajaran (mis. biologi)"
+                        className="flex-1 border border-outline-variant rounded-md px-3 py-2 bg-surface-container-lowest text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all"
+                      />
+                      <input
+                        type="number"
+                        min={0}
+                        max={100}
+                        value={row.score}
+                        onChange={(e) =>
+                          setSubjectScores((rows) =>
+                            rows.map((r, i) => (i === idx ? { ...r, score: e.target.value } : r))
+                          )
+                        }
+                        placeholder="Nilai"
+                        className="w-24 border border-outline-variant rounded-md px-3 py-2 bg-surface-container-lowest text-on-surface placeholder:text-outline/60 focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setSubjectScores((rows) => rows.filter((_, i) => i !== idx))}
+                        className="px-3 py-2 text-on-surface-variant hover:text-error transition"
+                        aria-label="Hapus mapel"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSubjectScores((rows) => [...rows, { subject: "", score: "" }])}
+                  className="mt-2 text-sm text-secondary hover:underline"
+                >
+                  + Tambah mata pelajaran
+                </button>
               </div>
               <div>
                 <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
@@ -678,6 +757,26 @@ export default function ProfilePage() {
                   <option value="rendah">Rendah</option>
                   <option value="menengah">Menengah</option>
                   <option value="tinggi">Tinggi</option>
+                  <option value="sangat_tinggi">Sangat Tinggi</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-on-surface-variant mb-1.5">
+                  Kesediaan Lama Pendidikan Lanjutan
+                </label>
+                <select
+                  value={goals.education_years_willing}
+                  onChange={(e) =>
+                    setGoals((g) => ({ ...g, education_years_willing: e.target.value }))
+                  }
+                  className="w-full border border-outline-variant rounded-md px-4 py-2.5 bg-surface-container-lowest text-on-surface focus:outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/20 transition-all"
+                >
+                  <option value="">Pilih durasi</option>
+                  <option value="0">Tidak ingin lanjut studi</option>
+                  <option value="3">±3 tahun (D3)</option>
+                  <option value="4">±4 tahun (S1/D4)</option>
+                  <option value="6">±6 tahun (S1 + Profesi/S2)</option>
+                  <option value="8">8 tahun atau lebih</option>
                 </select>
               </div>
               <div>

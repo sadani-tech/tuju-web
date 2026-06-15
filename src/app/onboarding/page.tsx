@@ -77,6 +77,64 @@ const PERSONALITY_QUESTIONS = [
   },
 ];
 
+// Work Style — 6 dimensi, masing-masing memetakan ke nilai 0.0 atau 1.0.
+const WORK_STYLE_QUESTIONS: {
+  dim: string;
+  question: string;
+  options: { label: string; desc: string; val: number }[];
+}[] = [
+  {
+    dim: "people_orientation",
+    question: "Kamu lebih enjoy kalau sehari-hari...",
+    options: [
+      { label: "🔍 Menganalisa data & sistem", desc: "Lebih banyak berpikir daripada berinteraksi", val: 0 },
+      { label: "👥 Bekerja langsung dengan orang", desc: "Ngobrol, bantu, koordinasi", val: 1 },
+    ],
+  },
+  {
+    dim: "structure",
+    question: "Lingkungan kerja ideal kamu...",
+    options: [
+      { label: "🎯 Fleksibel & bebas eksplorasi", desc: "Tidak terlalu banyak batasan", val: 0 },
+      { label: "📋 Terstruktur & jelas", desc: "Punya aturan, jadwal, dan kepastian", val: 1 },
+    ],
+  },
+  {
+    dim: "environment",
+    question: "Kamu lebih nyaman bekerja...",
+    options: [
+      { label: "🏢 Di dalam ruangan", desc: "Kantor, studio, lab, di balik layar", val: 0 },
+      { label: "🌿 Di luar / berpindah tempat", desc: "Lapangan, banyak lokasi berbeda", val: 1 },
+    ],
+  },
+  {
+    dim: "collaboration",
+    question: "Kamu paling produktif saat...",
+    options: [
+      { label: "🧍 Bekerja mandiri", desc: "Fokus sendiri, minim gangguan", val: 0 },
+      { label: "🤝 Bekerja dalam tim", desc: "Ada dinamika, saling support, diskusi", val: 1 },
+    ],
+  },
+  {
+    dim: "stress_tolerance",
+    question: "Kalau kerjaan penuh deadline & tekanan tinggi...",
+    options: [
+      { label: "🌊 Prefer lingkungan stabil", desc: "Tidak terlalu high-pressure", val: 0 },
+      { label: "⚡ Justru makin fokus", desc: "Suka tantangan dan situasi kritis", val: 1 },
+    ],
+  },
+  {
+    dim: "variety",
+    question: "Dalam pekerjaan, kamu lebih suka...",
+    options: [
+      { label: "🎯 Tugas konsisten", desc: "Bisa dikuasai dalam-dalam hingga jadi ahli", val: 0 },
+      { label: "🔄 Tugas yang terus berubah", desc: "Selalu ada hal baru dan tantangan berbeda", val: 1 },
+    ],
+  },
+];
+
+const TOTAL_STEP4 = PERSONALITY_QUESTIONS.length + WORK_STYLE_QUESTIONS.length; // 11
+
 interface FormData {
   segment: Segment | "";
   city: string;
@@ -84,6 +142,7 @@ interface FormData {
   major_current: string;
   interest_domains: string[];
   personality: Record<string, string>;
+  work_style: Record<string, number>;
 }
 
 export default function OnboardingPage() {
@@ -101,10 +160,11 @@ export default function OnboardingPage() {
     major_current: "",
     interest_domains: [],
     personality: {},
+    work_style: {},
   });
 
   const progress =
-    step === 4 ? 75 + (subStep / 5) * 25 : (step / 4) * 100;
+    step === 4 ? 75 + (subStep / TOTAL_STEP4) * 25 : (step / 4) * 100;
 
   const toggleInterest = (val: string) => {
     setForm((f) => ({
@@ -115,16 +175,24 @@ export default function OnboardingPage() {
     }));
   };
 
-  const answerPersonality = (qIndex: number, answer: string) => {
-    const updatedPersonality = { ...form.personality, [`q${qIndex}`]: answer };
-    setForm((f) => ({
-      ...f,
-      personality: updatedPersonality,
-    }));
-    if (qIndex < 4) {
-      setSubStep(qIndex + 1);
+  // Sub-steps 0..4 = personality questions; 5..10 = work style questions.
+  const answerStep4 = (subIndex: number, answer: string | number) => {
+    let nextForm = form;
+    if (subIndex < PERSONALITY_QUESTIONS.length) {
+      const updated = { ...form.personality, [`q${subIndex}`]: answer as string };
+      nextForm = { ...form, personality: updated };
     } else {
-      handleSubmit({ ...form, personality: updatedPersonality });
+      const wsIndex = subIndex - PERSONALITY_QUESTIONS.length;
+      const dim = WORK_STYLE_QUESTIONS[wsIndex].dim;
+      const updated = { ...form.work_style, [dim]: answer as number };
+      nextForm = { ...form, work_style: updated };
+    }
+    setForm(nextForm);
+
+    if (subIndex < TOTAL_STEP4 - 1) {
+      setSubStep(subIndex + 1);
+    } else {
+      handleSubmit(nextForm);
     }
   };
 
@@ -142,6 +210,8 @@ export default function OnboardingPage() {
         segment: finalForm.segment as Segment,
         city: finalForm.city || undefined,
         interest_domains: finalForm.interest_domains,
+        personality: finalForm.personality,
+        work_style: finalForm.work_style,
       });
 
       await roadmapApi.init().catch(() => {});
@@ -214,6 +284,7 @@ export default function OnboardingPage() {
               setPollStatus("idle");
               setLoading(false);
               setStep(4);
+              setSubStep(0);
             }}
             className="bg-secondary hover:bg-secondary-container text-on-secondary rounded-md px-6 py-3 text-button font-semibold transition"
           >
@@ -225,7 +296,9 @@ export default function OnboardingPage() {
   }
 
   const stepLabel =
-    step === 4 ? `Langkah 4 · Pertanyaan ${subStep + 1} dari 5` : `Langkah ${step} dari 4`;
+    step === 4
+      ? `Langkah 4 · Pertanyaan ${subStep + 1} dari ${TOTAL_STEP4}`
+      : `Langkah ${step} dari 4`;
 
   return (
     <div className="min-h-screen bg-background relative flex flex-col">
@@ -444,52 +517,76 @@ export default function OnboardingPage() {
             </div>
           )}
 
-          {/* STEP 4 — Personality (sub-steps) */}
-          {step === 4 && (
-            <div className="space-y-8 max-w-lg mx-auto">
-              <div>
-                <div className="flex gap-1.5 mb-6">
-                  {[0, 1, 2, 3, 4].map((i) => (
-                    <div
-                      key={i}
-                      className={`h-1.5 flex-1 rounded-full ${
-                        i <= subStep ? "bg-tertiary-fixed-dim" : "bg-surface-container-highest"
-                      }`}
-                    />
+          {/* STEP 4 — Personality + Work Style (11 sub-steps) */}
+          {step === 4 && (() => {
+            const isWorkStyle = subStep >= PERSONALITY_QUESTIONS.length;
+            const wsIndex = subStep - PERSONALITY_QUESTIONS.length;
+            const current = isWorkStyle
+              ? WORK_STYLE_QUESTIONS[wsIndex]
+              : PERSONALITY_QUESTIONS[subStep];
+            const options = isWorkStyle
+              ? WORK_STYLE_QUESTIONS[wsIndex].options.map((o) => ({
+                  key: `${WORK_STYLE_QUESTIONS[wsIndex].dim}-${o.val}`,
+                  label: o.label,
+                  desc: o.desc,
+                  answer: o.val as string | number,
+                }))
+              : PERSONALITY_QUESTIONS[subStep].options.map((o) => ({
+                  key: o.value,
+                  label: o.label,
+                  desc: o.desc,
+                  answer: o.value as string | number,
+                }));
+
+            return (
+              <div className="space-y-8 max-w-lg mx-auto">
+                <div>
+                  <div className="flex gap-1.5 mb-6">
+                    {Array.from({ length: TOTAL_STEP4 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className={`h-1.5 flex-1 rounded-full ${
+                          i <= subStep ? "bg-tertiary-fixed-dim" : "bg-surface-container-highest"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <p className="font-label text-label-sm uppercase tracking-wide text-secondary text-center mb-2">
+                    {isWorkStyle ? "Gaya Kerja" : "Kepribadian"}
+                  </p>
+                  <h1 className="text-headline-md md:text-3xl font-bold text-primary mb-2 text-center">
+                    {current.question}
+                  </h1>
+                  <p className="font-label text-label-sm text-on-surface-variant text-center">
+                    Pertanyaan {subStep + 1} dari {TOTAL_STEP4}
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  {options.map((opt) => (
+                    <button
+                      key={opt.key}
+                      onClick={() => answerStep4(subStep, opt.answer)}
+                      className="w-full flex items-center gap-4 p-5 rounded-md border border-outline-variant/40 bg-surface-container-lowest hover:border-secondary hover:ring-2 hover:ring-secondary/20 text-left transition shadow-sm"
+                    >
+                      <div>
+                        <p className="font-semibold text-primary">{opt.label}</p>
+                        <p className="text-sm text-on-surface-variant">{opt.desc}</p>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-secondary ml-auto shrink-0" />
+                    </button>
                   ))}
                 </div>
-                <h1 className="text-headline-md md:text-3xl font-bold text-primary mb-2 text-center">
-                  {PERSONALITY_QUESTIONS[subStep].question}
-                </h1>
-                <p className="font-label text-label-sm text-on-surface-variant text-center">
-                  Pertanyaan {subStep + 1} dari 5
-                </p>
-              </div>
-              <div className="space-y-3">
-                {PERSONALITY_QUESTIONS[subStep].options.map((opt) => (
+                {subStep > 0 && (
                   <button
-                    key={opt.value}
-                    onClick={() => answerPersonality(subStep, opt.value)}
-                    className="w-full flex items-center gap-4 p-5 rounded-md border border-outline-variant/40 bg-surface-container-lowest hover:border-secondary hover:ring-2 hover:ring-secondary/20 text-left transition shadow-sm"
+                    onClick={() => setSubStep((s) => s - 1)}
+                    className="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition"
                   >
-                    <div>
-                      <p className="font-semibold text-primary">{opt.label}</p>
-                      <p className="text-sm text-on-surface-variant">{opt.desc}</p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-secondary ml-auto shrink-0" />
+                    <ArrowLeft className="w-4 h-4" /> Pertanyaan sebelumnya
                   </button>
-                ))}
+                )}
               </div>
-              {subStep > 0 && (
-                <button
-                  onClick={() => setSubStep((s) => s - 1)}
-                  className="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition"
-                >
-                  <ArrowLeft className="w-4 h-4" /> Pertanyaan sebelumnya
-                </button>
-              )}
-            </div>
-          )}
+            );
+          })()}
 
         </div>
       </div>

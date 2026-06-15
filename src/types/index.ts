@@ -45,10 +45,10 @@ export interface CompletenessResult {
 
 export interface ProfileMe {
   profile: { segment: string; city: string | null; completeness_pct: number; is_verified: boolean } | null;
-  academic: { education_level: string | null; school_name: string | null; current_grade: string | null; avg_score: number | null; favorite_subjects: string[] | null; achievements: string[] | null } | null;
+  academic: { education_level: string | null; school_name: string | null; current_grade: string | null; avg_score: number | null; subject_scores: Record<string, number> | null; favorite_subjects: string[] | null; achievements: string[] | null } | null;
   personality: { riasec_r: number | null; riasec_i: number | null; riasec_a: number | null; riasec_s: number | null; riasec_e: number | null; riasec_c: number | null; extrovert_score: number | null; analytical_score: number | null; creative_score: number | null; work_style: Record<string, number> | null } | null;
   interests: { interest_categories: string[] | null; hobbies: string[] | null; extracurricular: string[] | null; hard_skills: string[] | null; soft_skills: string[] | null } | null;
-  goals: { financial_condition: string | null; education_target: string | null; career_target_5y: string | null; current_obstacles: string | null } | null;
+  goals: { financial_condition: string | null; education_target: string | null; education_years_willing: number | null; career_target_5y: string | null; current_obstacles: string | null } | null;
   documents: Array<{ id: string; document_type: string; file_name: string; file_url: string }>;
 }
 

@@ -60,15 +60,17 @@ export function TaskCard({ task, onComplete, completing }: TaskCardProps) {
             >
               {task.title}
             </p>
-            <span
-              className={`font-label text-label-sm font-bold px-2 py-0.5 rounded-full flex-shrink-0 whitespace-nowrap ${
-                isCompleted
-                  ? "bg-tertiary-fixed-dim/20 text-on-tertiary-fixed-variant"
-                  : "bg-primary-fixed text-on-primary-fixed-variant"
-              }`}
-            >
-              {isCompleted ? "Selesai " : ""}+{task.points_reward} XP
-            </span>
+            {(task.points_reward > 0 || isCompleted) && (
+              <span
+                className={`font-label text-label-sm font-bold px-2 py-0.5 rounded-full flex-shrink-0 whitespace-nowrap ${
+                  isCompleted
+                    ? "bg-tertiary-fixed-dim/20 text-on-tertiary-fixed-variant"
+                    : "bg-primary-fixed text-on-primary-fixed-variant"
+                }`}
+              >
+                {isCompleted ? "Selesai" : `+${task.points_reward} XP`}
+              </span>
+            )}
           </div>
           {task.description && (
             <p className={`text-xs mt-1 ${isCompleted ? "text-outline" : "text-on-surface-variant"}`}>

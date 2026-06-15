@@ -36,7 +36,12 @@ export const authApi = {
     city?: string;
     birth_date?: string;
     interest_domains?: string[];
+    personality?: Record<string, string>;
+    work_style?: Record<string, number>;
   }) => api.put("/api/v1/auth/onboarding", data),
+  verifyEmail: (token: string) =>
+    api.post("/api/v1/auth/verify-email", { token }),
+  resendVerification: () => api.post("/api/v1/auth/resend-verification"),
 };
 
 export const profileApi = {

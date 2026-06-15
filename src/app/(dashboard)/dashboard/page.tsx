@@ -275,7 +275,9 @@ export default function DashboardPage() {
                     </div>
                     <div className={`w-full ${idx === 0 ? "bg-primary-fixed/30 p-3 rounded-md border border-primary-fixed" : ""}`}>
                       <p className={`text-sm text-primary ${idx === 0 ? "font-bold" : ""}`}>{task.title}</p>
-                      <p className="font-label text-label-sm text-on-surface-variant">+{task.points_reward} pts</p>
+                      {task.points_reward > 0 && (
+                        <p className="font-label text-label-sm text-on-surface-variant">+{task.points_reward} pts</p>
+                      )}
                       <button
                         onClick={() => handleCompleteTask(task.id)}
                         disabled={!!completingTask}
