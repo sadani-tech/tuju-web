@@ -55,6 +55,7 @@ export function TagInput({
         value={input}
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKey}
+        onBlur={addTag}
         placeholder={value.length === 0 ? placeholder : ""}
         className="flex-1 min-w-[120px] outline-none text-sm text-on-surface bg-transparent placeholder:text-outline/60"
       />
