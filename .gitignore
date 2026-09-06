@@ -1,0 +1,19 @@
+.env
+
+# Node
+node_modules/
+.next/
+dist/
+.env.local
+.env*.local
+
+# OS
+.DS_Store
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# Docker
+*.override.yml
